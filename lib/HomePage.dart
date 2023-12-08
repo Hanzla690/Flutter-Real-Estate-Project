@@ -7,6 +7,7 @@ import 'package:flutter_project/CreateHousePostPage.dart';
 import 'package:flutter_project/FavoritesPage.dart';
 import 'package:flutter_project/FireStoreCollections.dart';
 import 'package:flutter_project/HouseDetailsPage.dart';
+import 'package:flutter_project/HouseFunctions.dart';
 import 'package:flutter_project/Models/UserModel.dart';
 import 'package:flutter_project/User%20Authentication/LoginPage.dart';
 import 'package:flutter_project/ProfilePage.dart';
@@ -66,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Icons.location_city,
     Icons.store
   ];
+  List favoritedIcons = [];
 
   @override
   Widget build(BuildContext context) {
@@ -180,6 +182,14 @@ class _MyHomePageState extends State<MyHomePage> {
               builder: (context, snapshot) {
                 return Column(
                     children: List.generate(snapshot.data!.length, (index) {
+                      if(favoritedIcons.length <= index){
+                        favoritedIcons.add(false);
+                      }
+                      for(var element in UserAuthentication.currentUser.favorites){
+                        if(snapshot.data![index].houseId == element){
+                          favoritedIcons[index] = true;
+                        }
+                      }
                   return Container(
                     child: InkWell(
                       onTap: () {
@@ -236,7 +246,19 @@ class _MyHomePageState extends State<MyHomePage> {
                           Padding(
                             padding: const EdgeInsets.only(top: 12, right: 15),
                             child: InkWell(
-                                onTap: () {}, child: Icon(Icons.favorite)),
+                                onTap: () {
+                                  HouseFunctions().toggleFavorite(
+                                      snapshot.data![index].houseId);
+                                  setState(() {
+                                    favoritedIcons[index] = !favoritedIcons[index];
+                                  });
+                                },
+                                child: Icon(
+                                  favoritedIcons[index]
+                                      ? CupertinoIcons.heart_fill
+                                      : CupertinoIcons.heart,
+                                  color: favoritedIcons[index] ? Colors.red : null,
+                                )),
                           ),
                         ],
                       ),
@@ -354,7 +376,7 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
                 },
                 child: Column(
                   children: [
-                    Icon(Icons.favorite),
+                    Icon(CupertinoIcons.heart_fill, color: Colors.red),
                     Text("Favorites"),
                   ],
                 ),

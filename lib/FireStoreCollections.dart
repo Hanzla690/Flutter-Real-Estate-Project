@@ -52,11 +52,13 @@ class FireStoreCollections {
     try {
       final documents =
           await userCollection.where('id', isNotEqualTo: currentUser.id).get();
+      debugPrint(documents.docs.length.toString());
       if (documents.docs.isNotEmpty) {
-        List<UserModel> users = documents.docs.map((doc) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          return UserModel.fromMap(data);
-        }).toList();
+        List<UserModel> users = documents.docs
+            .map((user) =>
+                UserModel.fromMap(user.data() as Map<String, dynamic>))
+            .toList();
+        debugPrint("User number: ${users.length.toString()}");
         return users;
       }
     } catch (e) {
@@ -114,5 +116,36 @@ class FireStoreCollections {
       debugPrint(e.toString());
     }
     return null;
+  }
+
+  Future<List<HouseModel>> fetchFavorites() async {
+    List houseIDs = UserAuthentication.currentUser.favorites;
+    List<HouseModel> houses = [];
+    for (var element in houseIDs) {
+      var doc = await propertiesCollection
+          .doc("properties")
+          .collection("house_rent")
+          .doc(element)
+          .get();
+      if (doc.exists) {
+        houses.add(HouseModel.fromMap(doc.data() as Map<String, dynamic>));
+      }
+    }
+    for (var element in houseIDs) {
+      var doc = await propertiesCollection
+          .doc("properties")
+          .collection("house_sell")
+          .doc(element)
+          .get();
+      if (doc.exists) {
+        houses.add(HouseModel.fromMap(doc.data() as Map<String, dynamic>));
+      }
+    }
+    return houses;
+  }
+
+  updateFavorites() async {
+    UserModel user = UserAuthentication.currentUser;
+    await userCollection.doc(user.id).set(user.toJSON());
   }
 }
