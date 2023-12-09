@@ -5,6 +5,8 @@ import 'package:flutter_project/User%20Authentication/LoginPage.dart';
 import 'package:flutter_project/User%20Authentication/UserAuthentication.dart';
 import 'package:flutter_project/Models/UserModel.dart';
 
+import 'Widgets/customAppBar.dart';
+
 class Profile extends StatefulWidget {
   const Profile({super.key});
 

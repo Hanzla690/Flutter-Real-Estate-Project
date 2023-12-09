@@ -3,6 +3,8 @@ import 'package:flutter_project/ChatActivePage.dart';
 import 'package:flutter_project/FireStoreCollections.dart';
 import 'package:flutter_project/HomePage.dart';
 
+import 'Widgets/customAppBar.dart';
+
 class Chats extends StatefulWidget {
   const Chats({super.key});
 
@@ -14,6 +16,24 @@ class _ChatsState extends State<Chats> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 3,
+        backgroundColor: Colors.white,
+        toolbarHeight: 80,
+        title: Row(
+          children: [
+            Icon(
+              Icons.chat_outlined,
+              color: Colors.green.shade500,
+            ),
+            const Text("Chats",
+              style: TextStyle(
+                  color: Colors.black
+              ),),
+          ],
+        ),
+        centerTitle: true,
+      ),
       bottomNavigationBar: CustomBottomAppBar(),
       body: FutureBuilder(
         future: FireStoreCollections().fetchUsers(),
@@ -35,8 +55,10 @@ class _ChatsState extends State<Chats> {
                   child: Row(
                     children: [
                       CircleAvatar(
+                        backgroundColor: Colors.green.shade100,
                         radius: 26,
-                        child: Icon(Icons.person),
+                        child: Icon(Icons.person,
+                        color: Colors.green.shade500,),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10),

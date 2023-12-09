@@ -6,6 +6,8 @@ import 'package:flutter_project/HouseDetailsPage.dart';
 import 'package:flutter_project/HouseFunctions.dart';
 import 'package:flutter_project/User%20Authentication/UserAuthentication.dart';
 
+import 'Widgets/customAppBar.dart';
+
 class Favorites extends StatefulWidget {
   const Favorites({super.key});
 

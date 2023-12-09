@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,9 +14,12 @@ import 'package:flutter_project/HouseFunctions.dart';
 import 'package:flutter_project/Models/UserModel.dart';
 import 'package:flutter_project/User%20Authentication/LoginPage.dart';
 import 'package:flutter_project/ProfilePage.dart';
-import 'package:flutter_project/User%20Authentication/SignUpPage.dart';
 import 'package:flutter_project/User%20Authentication/UserAuthentication.dart';
+import 'package:flutter_project/Widgets/search_field.dart';
+import 'package:flutter_project/Widgets/select_cat.dart';
 import 'package:flutter_project/firebase_options.dart';
+
+import 'Widgets/customAppBar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +40,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const Login(),
+    scrollBehavior: const MaterialScrollBehavior().copyWith(
+    dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown},)
     );
   }
 }
@@ -73,16 +81,92 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue.shade200,
-        title: Text(widget.title),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        toolbarHeight: 80,
+        title: Row(
+          children: [
+            Icon(
+              Icons.location_on,
+              color: Colors.green.shade500,
+            ),
+            const Text("Lahore, Pakistan",
+              style: TextStyle(
+                  color: Colors.black
+              ),),
+          ],
+        ),
+        actions: [
+          IconButton(
+              onPressed: (){},
+              icon: const Icon(Icons.notifications,
+                  color: Colors.green))
+        ],
+        centerTitle: true,
       ),
-      bottomNavigationBar: CustomBottomAppBar(),
+      backgroundColor: Colors.white,
+      bottomNavigationBar: const CustomBottomAppBar(),
+
       body: Container(
         height: MediaQuery.of(context).size.height,
         child: ListView(
           children: [
+            const SizedBox(height: 8,),
+            const SearchField(),
+            const SizedBox(height: 8,),
+            CarouselSlider(
+                items: [
+                  Container(
+                    margin: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      image: const DecorationImage(
+                        image: AssetImage("assets/cover-image-4-1.jpg"),
+                         fit: BoxFit.cover
+                         // image: NetworkImage("https://media.istockphoto.com/id/1409298953/photo/real-estate-agents-shake-hands-after-the-signing-of-the-contract-agreement-is-complete.jpg?s=1024x1024&w=is&k=20&c=Q7y-IUDhsXhiKKDPopD1ZRHRvkeunhledaJ2iMRdEr8="))
+                    ),
+                      borderRadius: BorderRadius.circular(25)
+                    )
+                  ),
+
+                  Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          image: const DecorationImage(
+                              image: AssetImage("assets/pexels-binyamin-mellish-186077.jpg"),
+                              fit: BoxFit.cover
+                          ),
+                          borderRadius: BorderRadius.circular(25)
+                      )
+                  ),
+
+                  Container(
+                      margin: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          image: const DecorationImage(
+                              image: AssetImage("assets/sell-property-in-india.jpg"),
+                              fit: BoxFit.cover
+                          ),
+                          borderRadius: BorderRadius.circular(25)
+                      )
+                  )
+                ],
+                options: CarouselOptions(
+                  height: 180,
+                  aspectRatio: 16/8,
+                  viewportFraction: 0.8,
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 2),
+                  autoPlayAnimationDuration: const Duration(milliseconds: 500),
+                  enlargeCenterPage: true,
+                  enlargeFactor: 0.5
+                )
+            ),
+
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 top: 10,
                 bottom: 10,
               ),
@@ -91,62 +175,25 @@ class _MyHomePageState extends State<MyHomePage> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: Colors.white,
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       blurRadius: 5,
                       color: Colors.grey,
                     )
-                  ]),
+                  ]
+              ),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.all(10),
                       child: Text(
                         'Browse Properties',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              Icon(Icons.house_outlined),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Houses'),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              Icon(Icons.location_on_outlined),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Plots'),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              Icon(Icons.store_outlined),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Commercial'),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                    const SelectCategory(),
+                    const SizedBox(height: 7),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(10),
@@ -157,8 +204,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             mainAxisSpacing: 10,
                             children: List.generate(cardItems.length, (index) {
                               return Container(
-                                width: 40,
-                                height: 20,
+                                width: 30,
+                                height: 18,
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                       color: Colors.grey,
@@ -168,7 +215,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: Center(
                                     child: Text(
                                   cardItems[index],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                  color: Colors.green.shade500),
                                 )),
                               );
                             })),
@@ -223,7 +272,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   children: [
                                     Text(
                                       snapshot.data![index].price.toString(),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(
@@ -282,7 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Navigator.pop(context);
           });
           return AlertDialog(
-            content: Text(
+            content: const Text(
               'This ad was posted by this account, so cannot chat with yourself',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14),
@@ -313,90 +362,5 @@ class _MyHomePageState extends State<MyHomePage> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Chat(user: user)));
     }
-  }
-}
-
-class CustomBottomAppBar extends StatefulWidget {
-  const CustomBottomAppBar({super.key});
-
-  @override
-  State<CustomBottomAppBar> createState() => _CustomBottomAppBarState();
-}
-
-class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
-  _CustomBottomAppBarState();
-  @override
-  Widget build(BuildContext context) {
-    return BottomAppBar(
-      height: 68,
-      child: Row(
-        children: [
-          Expanded(
-              flex: 1,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) => MyHomePage())));
-                },
-                child: Column(
-                  children: [
-                    Icon(CupertinoIcons.home),
-                    Text("Home"),
-                  ],
-                ),
-              )),
-          Expanded(
-              flex: 1,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Chats()));
-                },
-                child: Column(
-                  children: [
-                    Icon(Icons.message),
-                    Text("Chats"),
-                  ],
-                ),
-              )),
-          Expanded(
-              flex: 1,
-              child: InkWell(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => CreatePost()));
-                  },
-                  child: Icon(Icons.add))),
-          Expanded(
-              flex: 1,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) => Favorites())));
-                },
-                child: Column(
-                  children: [
-                    Icon(CupertinoIcons.heart_fill, color: Colors.red),
-                    Text("Favorites"),
-                  ],
-                ),
-              )),
-          Expanded(
-              flex: 1,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Profile()));
-                },
-                child: Column(
-                  children: [
-                    Icon(Icons.person),
-                    Text("Profile"),
-                  ],
-                ),
-              )),
-        ],
-      ),
-    );
   }
 }

@@ -23,11 +23,14 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 3,
         title: Row(
           children: [
             CircleAvatar(
+              backgroundColor: Colors.green.shade100,
               radius: 18,
-              child: Icon(Icons.person),
+              child: Icon(Icons.person,
+              color: Colors.green.shade500,),
             ),
             SizedBox(
               width: 7,
@@ -59,7 +62,7 @@ class _ChatState extends State<Chat> {
                         nipHeight: 10,
                         alignment: isSent ? Alignment.topRight : Alignment.topLeft,
                         nip: isSent ? BubbleNip.rightBottom : BubbleNip.leftTop,
-                        color: isSent ? Colors.blue : Colors.grey[200],
+                        color: isSent ? Colors.green.shade400 : Colors.grey[200],
                         child: Text(
                           messages[index].messageBody,
                           style: TextStyle(
@@ -76,7 +79,9 @@ class _ChatState extends State<Chat> {
           Container(
               color: Colors.white,
               child: Row(children: [
+                SizedBox(width: 1),
                 Icon(Icons.tag_faces),
+                SizedBox(width: 1,),
                 Icon(Icons.attach_file),
                 SizedBox(
                   width: 8,
@@ -110,7 +115,7 @@ class _ChatState extends State<Chat> {
                     },
                     child: Icon(
                       Icons.send,
-                      color: Colors.green,
+                      color: Colors.green.shade500,
                     ),
                   ),
                 ),
