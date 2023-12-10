@@ -26,142 +26,79 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   List<XFile> images = [];
-  List<String> cities = [
-    'Karachi',
-    'Lahore',
-    'Faisalabad',
-    'Rawalpindi',
-    'Multan',
-    'Hyderabad',
-    'Gujranwala',
-    'Peshawar',
-    'Islamabad',
-    'Bahawalpur',
-    'Sargodha',
-    'Sialkot',
-    'Quetta',
-    'Sukkur',
-    'Jhang',
-    'Shekhupura',
-    'Mardan',
-    'Gujrat',
-    'Larkana',
-    'Kasur',
-    'Rahim Yar Khan',
-    'Sahiwal',
-    'Okara',
-    'Wah Cantonment',
-    'Dera Ghazi Khan',
-    'Mingora',
-    'Mirpur Khas',
-    'Chiniot',
-    'Nawabshah',
-    'Kāmoke',
-    'Burewala',
-    'Jhelum',
-    'Sadiqabad',
-    'Khanewal',
-    'Hafizabad',
-    'Kohat',
-    'Jacobabad',
-    'Shikarpur',
-    'Muzaffargarh',
-    'Khanpur',
-    'Gojra',
-    'Bahawalnagar',
-    'Abbottabad',
-    'Muridke',
-    'Pakpattan',
-    'Khuzdar',
-    'Jaranwala',
-    'Chishtian',
-    'Daska',
-    'Bhalwal',
-    'Mandi Bahauddin',
-    'Ahmadpur East',
-    'Kamalia',
-    'Tando Adam',
-    'Khairpur',
-    'Dera Ismail Khan',
-    'Vehari',
-    'Nowshera',
-    'Dadu',
-    'Wazirabad',
-    'Khushab',
-    'Charsada',
-    'Swabi',
-    'Chakwal',
-    'Mianwali',
-    'Tando Allahyar',
-    'Kot Adu',
-    'Turbat'
+
+  List<String> cities = ['Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Multan', 'Hyderabad',
+    'Gujranwala', 'Peshawar', 'Islamabad', 'Bahawalpur', 'Sargodha', 'Sialkot', 'Quetta', 'Sukkur',
+    'Jhang', 'Shekhupura', 'Mardan', 'Gujrat', 'Larkana', 'Kasur', 'Rahim Yar Khan', 'Sahiwal',
+    'Okara', 'Wah Cantonment', 'Dera Ghazi Khan', 'Mingora', 'Mirpur Khas', 'Chiniot', 'Nawabshah',
+    'Kāmoke', 'Burewala', 'Jhelum', 'Sadiqabad', 'Khanewal', 'Hafizabad', 'Kohat', 'Jacobabad', 'Shikarpur',
+    'Muzaffargarh', 'Khanpur', 'Gojra', 'Bahawalnagar', 'Abbottabad', 'Muridke', 'Pakpattan', 'Khuzdar',
+    'Jaranwala', 'Chishtian', 'Daska', 'Bhalwal', 'Mandi Bahauddin', 'Ahmadpur East', 'Kamalia', 'Tando Adam', 'Khairpur',
+    'Dera Ismail Khan', 'Vehari', 'Nowshera', 'Dadu', 'Wazirabad', 'Khushab', 'Charsada', 'Swabi', 'Chakwal',
+    'Mianwali', 'Tando Allahyar', 'Kot Adu', 'Turbat'
   ];
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 3,
+        backgroundColor: Colors.white,
+        toolbarHeight: 60,
+        title: Row(
+          children: [
+            Icon(
+              Icons.add_circle,
+              color: Colors.green.shade500,
+            ),
+            const Text("Post Ad",
+              style: TextStyle(
+                  color: Colors.black
+              ),),
+          ],
+        ),
+        centerTitle: true,
+      ),
+
       body: ListView(
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              RadioListTile(
-                  title: Text('Sell'),
-                  value: 'Sell',
-                  groupValue: currentPurpose,
-                  onChanged: (value) {
-                    setState(() {
-                      currentPurpose = value.toString();
-                    });
-                  }),
-              RadioListTile(
-                  title: Text('Rent'),
-                  value: 'Rent',
-                  groupValue: currentPurpose,
-                  onChanged: (value) {
-                    setState(() {
-                      currentPurpose = value.toString();
-                    });
-                  }),
-              SizedBox(
-                height: 5,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                  "Property Type",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+              Container(
+                height: 250,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(18),
+                      bottomRight: Radius.circular(18)),
+                  image: DecorationImage(
+                      image: AssetImage("assets/minimalHouse.jpg"),
+                  fit: BoxFit.cover)
                 ),
               ),
-              RadioListTile(
-                  title: Text('House'),
-                  value: 'House',
-                  groupValue: propertyType,
-                  onChanged: (value) {
-                    setState(() {
-                      propertyType = value.toString();
-                    });
-                  }),
-              RadioListTile(
-                  title: Text('Plot'),
-                  value: 'Plot',
-                  groupValue: propertyType,
-                  onChanged: (value) {
-                    setState(() {
-                      propertyType = value.toString();
-                    });
-                  }),
-              RadioListTile(
-                  title: Text('Commercial'),
-                  value: 'Commercial',
-                  groupValue: propertyType,
-                  onChanged: (value) {
-                    setState(() {
-                      propertyType = value.toString();
-                    });
-                  }),
-              SizedBox(
-                height: 5,
+              const SizedBox(height: 12,),
+              ListTile(
+                title: const Text("Ad Title"),
+                subtitle: TextField(
+                    controller: titleController,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            width: 2,
+                            color: Colors.green.shade500),
+                        borderRadius: BorderRadius.circular(40.0),
+                      ),
+                      hintText: 'Enter a title',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                    )
+                ),
+                leading: Icon(Icons.title,
+                  color: Colors.green.shade500,),
               ),
+              SizedBox(height: 5,),
               InkWell(
                 onTap: () {
                   showModalBottomSheet(
@@ -178,7 +115,8 @@ class _CreatePostState extends State<CreatePost> {
                                 child: TextField(
                                   decoration: InputDecoration(
                                     hintText: 'Search City',
-                                    prefixIcon: Icon(Icons.search),
+                                    prefixIcon: Icon(Icons.search,
+                                      color: Colors.green.shade500,),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(20.0),
                                     ),
@@ -191,7 +129,7 @@ class _CreatePostState extends State<CreatePost> {
                                   itemBuilder: (context, index) {
                                     return Padding(
                                       padding: const EdgeInsets.only(
-                                          top: 12, left: 12),
+                                          top: 14, left: 14),
                                       child: InkWell(
                                         onTap: () {
                                           setState(() {
@@ -201,7 +139,7 @@ class _CreatePostState extends State<CreatePost> {
                                         },
                                         child: Text(
                                           cities[index],
-                                          style: TextStyle(fontSize: 16),
+                                          style: const TextStyle(fontSize: 16),
                                         ),
                                       ),
                                     );
@@ -214,47 +152,136 @@ class _CreatePostState extends State<CreatePost> {
                       });
                 },
                 child: ListTile(
-                  title: Text("City"),
+                  title: const Text("City"),
                   subtitle: Text(selectedCity),
-                  leading: Icon(Icons.location_on),
-                  trailing: Icon(Icons.arrow_right),
+                  leading: Icon(Icons.location_on,
+                    color: Colors.green.shade500,),
+                  trailing: Icon(Icons.arrow_right,
+                    color: Colors.green.shade500,),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               TextField(
                 controller: areaController,
                 decoration: InputDecoration(
                   hintText: 'Area',
-                  prefixIcon: Icon(Icons.location_history),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 2,
+                        color: Colors.green.shade500),
+                    borderRadius: BorderRadius.circular(40.0),
+                  ),
+                  prefixIcon: Icon(Icons.location_history,
+                    color: Colors.green.shade500,),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
               ),
-              SizedBox(
-                height: 10,
+              const SizedBox(
+                height: 8,
               ),
               TextField(
                 controller: addressController,
                 decoration: InputDecoration(
                   hintText: 'Address',
-                  prefixIcon: Icon(Icons.search),
+                  prefixIcon: Icon(Icons.search,
+                      color: Colors.green.shade500),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 2,
+                        color: Colors.green.shade500),
+                    borderRadius: BorderRadius.circular(40.0),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
               ),
+              const SizedBox(height: 5,),
+              const Divider(thickness: 1,),
+              RadioListTile(
+                  title: const Text('Sell'),
+                  value: 'Sell',
+                  groupValue: currentPurpose,
+                  hoverColor: Colors.green.shade200,
+                  activeColor: Colors.green.shade500,
+                  onChanged: (value) {
+                    setState(() {
+                      currentPurpose = value.toString();
+                    });
+                  }),
+              RadioListTile(
+                  title: const Text('Rent'),
+                  value: 'Rent',
+                  hoverColor: Colors.green.shade200,
+                  activeColor: Colors.green.shade500,
+                  groupValue: currentPurpose,
+                  onChanged: (value) {
+                    setState(() {
+                      currentPurpose = value.toString();
+                    });
+                  }),
+              const SizedBox(
+                height: 5,
+              ),
+              const Divider(thickness: 1,),
+              const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Text(
+                  "Property Type",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              RadioListTile(
+                  title: const Text('House'),
+                  value: 'House',
+                  groupValue: propertyType,
+                  hoverColor: Colors.green.shade200,
+                  activeColor: Colors.green.shade500,
+                  onChanged: (value) {
+                    setState(() {
+                      propertyType = value.toString();
+                    });
+                  }),
+              RadioListTile(
+                  title: const Text('Plot'),
+                  value: 'Plot',
+                  groupValue: propertyType,
+                  hoverColor: Colors.green.shade200,
+                  activeColor: Colors.green.shade500,
+                  onChanged: (value) {
+                    setState(() {
+                      propertyType = value.toString();
+                    });
+                  }),
+              RadioListTile(
+                  title: const Text('Commercial'),
+                  value: 'Commercial',
+                  groupValue: propertyType,
+                  hoverColor: Colors.green.shade200,
+                  activeColor: Colors.green.shade500,
+                  onChanged: (value) {
+                    setState(() {
+                      propertyType = value.toString();
+                    });
+                  }),
+              const SizedBox(
+                height: 5,
+              ),
+              const Divider(thickness: 1,),
               ListTile(
-                title: Text("Area Size"),
+                title: const Text("Property's Area"),
                 subtitle: TextField(
                   controller: areaSizeController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       hintText: 'Enter area size',
                       border: UnderlineInputBorder()),
                 ),
-                leading: Icon(Icons.area_chart),
+                leading: Icon(Icons.area_chart,
+                color: Colors.green.shade500,),
                 trailing: DropdownButton(
                     value: areaSize,
                     onChanged: (value) {
@@ -262,52 +289,87 @@ class _CreatePostState extends State<CreatePost> {
                         areaSize = value.toString();
                       });
                     },
-                    items: [
+                    items: const [
                       DropdownMenuItem(value: 'Marla', child: Text('Marla')),
                       DropdownMenuItem(value: 'Kanal', child: Text('Kanal')),
                     ]),
               ),
               ListTile(
-                title: Text("Total Price"),
+                title: const Text("Price/Demand (PKR)"),
                 subtitle: TextField(
                   controller: priceController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                      hintText: 'Enter Price', border: UnderlineInputBorder()),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            width: 2,
+                            color: Colors.green.shade500),
+                        borderRadius: BorderRadius.circular(40.0),
+                      ),
+                      hintText: 'Enter Price',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20)
+                      )),
                 ),
-                leading: Icon(Icons.tag),
+                leading: Icon(Icons.money,
+                color: Colors.green.shade500,),
               ),
+              const SizedBox(height: 5,),
+              const Divider(
+                thickness: 1,
+              indent: 5,
+              endIndent: 5,),
               ListTile(
-                title: Text("Property Title"),
+                title: const Text("Property Description"),
                 subtitle: TextField(
-                  controller: titleController,
-                  decoration: InputDecoration(
-                      hintText: 'Enter a title',
-                      border: UnderlineInputBorder()),
-                ),
-                leading: Icon(Icons.title),
-              ),
-              ListTile(
-                title: Text("Property Description"),
-                subtitle: TextField(
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 4,
                   controller: descriptionController,
-                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 3,
+                        color: Colors.green.shade500)
+                    ),
                       hintText: 'Describe your property in detail',
-                      border: UnderlineInputBorder()),
+                     // border: UnderlineInputBorder()
+                  ),
                 ),
-                leading: Icon(Icons.description),
+                leading: Icon(Icons.description,
+                color: Colors.green.shade500,),
               ),
               ListTile(
-                title: Text('Upload Pictures'),
-                leading: Icon(Icons.image),
+                title: const Text('Upload Pictures'),
+                leading: Icon(Icons.image,
+                color: Colors.green.shade500,),
                 trailing: ElevatedButton(
-                    onPressed: pickImages, child: Text("Select Pictures")),
+                    onPressed: pickImages,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade500
+                  ),
+                    child: const Text("Select Pictures",
+                    style: TextStyle(
+                      color: Colors.white
+                    ),),
+                ),
               ),
+              const SizedBox(height: 12,),
               Align(
                   alignment: Alignment.bottomCenter,
                   child: ElevatedButton(
-                      onPressed: postAd, child: Text("Post an Ad"))),
+                      onPressed: postAd,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade500
+                    ),
+                      child: const Text(
+                        "Post this Ad",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.white),
+                      ),
+                  )
+              ),
             ],
           )
         ],
