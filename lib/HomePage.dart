@@ -79,195 +79,210 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: CustomBottomAppBar(),
       body: Container(
         height: MediaQuery.of(context).size.height,
-        child: ListView(
-          children: [
-            Container(
-              margin: EdgeInsets.only(
-                top: 10,
-                bottom: 10,
-              ),
-              width: 390,
-              height: 255,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 5,
-                      color: Colors.grey,
-                    )
-                  ]),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        'Browse Properties',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+        child: FutureBuilder(
+          future: FireStoreCollections().fetchHouses("Rent"),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
                     ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              Icon(Icons.house_outlined),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Houses'),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              Icon(Icons.location_on_outlined),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Plots'),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              Icon(Icons.store_outlined),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Commercial'),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: GridView.count(
-                            crossAxisCount: 3,
-                            childAspectRatio: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            children: List.generate(cardItems.length, (index) {
-                              return Container(
-                                width: 40,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.grey,
-                                      width: .5,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Center(
-                                    child: Text(
-                                  cardItems[index],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )),
-                              );
-                            })),
-                      ),
-                    ),
-                  ]),
-            ),
-            const SizedBox(height: 15),
-            FutureBuilder(
-              future: FireStoreCollections().fetchHouses("Rent"),
-              builder: (context, snapshot) {
-                return Column(
-                    children: List.generate(snapshot.data!.length, (index) {
-                      if(favoritedIcons.length <= index){
-                        favoritedIcons.add(false);
-                      }
-                      for(var element in UserAuthentication.currentUser.favorites){
-                        if(snapshot.data![index].houseId == element){
-                          favoritedIcons[index] = true;
-                        }
-                      }
-                  return Container(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return HouseDetails(
-                            house: snapshot.data![index],
-                            user: snapshot.data![index].userId,
-                            imageUrl: imageUrl,
-                          );
-                        }));
-                      },
-                      child: Row(
+                    width: 390,
+                    height: 255,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 5,
+                            color: Colors.grey,
+                          )
+                        ]),
+                    child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Text(
+                              'Browse Properties',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Image.network(
-                                imageUrl,
-                                height: 120,
-                                width: 120,
-                                fit: BoxFit.cover,
-                              ),
                               Padding(
-                                padding: EdgeInsets.only(top: 12, left: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                                padding: EdgeInsets.all(10),
+                                child: Row(
                                   children: [
-                                    Text(
-                                      snapshot.data![index].price.toString(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                    Icon(Icons.house_outlined),
+                                    SizedBox(
+                                      width: 5,
                                     ),
-                                    Text(
-                                        "${snapshot.data![index].address} ${snapshot.data![index].area}"),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 25),
-                                      child: OutlinedButton(
-                                          onPressed: () {
-                                            openChatWithUser(
-                                                userId: snapshot
-                                                    .data![index].userId);
-                                          },
-                                          child: Text('Chat')),
-                                    ),
+                                    Text('Houses'),
                                   ],
                                 ),
                               ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.location_on_outlined),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text('Plots'),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.store_outlined),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text('Commercial'),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12, right: 15),
-                            child: InkWell(
-                                onTap: () {
-                                  HouseFunctions().toggleFavorite(
-                                      snapshot.data![index].houseId);
-                                  setState(() {
-                                    favoritedIcons[index] = !favoritedIcons[index];
-                                  });
-                                },
-                                child: Icon(
-                                  favoritedIcons[index]
-                                      ? CupertinoIcons.heart_fill
-                                      : CupertinoIcons.heart,
-                                  color: favoritedIcons[index] ? Colors.red : null,
-                                )),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: GridView.count(
+                                  crossAxisCount: 3,
+                                  childAspectRatio: 2,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
+                                  children:
+                                      List.generate(cardItems.length, (index) {
+                                    return Container(
+                                      width: 40,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.grey,
+                                            width: .5,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Center(
+                                          child: Text(
+                                        cardItems[index],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      )),
+                                    );
+                                  })),
+                            ),
                           ),
-                        ],
+                        ]),
+                  ),
+                  const SizedBox(height: 15),
+                  Column(
+                      children: List.generate(snapshot.data!.length, (index) {
+                    if (favoritedIcons.length <= index) {
+                      favoritedIcons.add(false);
+                    }
+                    for (var element
+                        in UserAuthentication.currentUser.favorites) {
+                      if (snapshot.data![index].houseId == element) {
+                        favoritedIcons[index] = true;
+                      }
+                    }
+                    return Container(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return HouseDetails(
+                              house: snapshot.data![index],
+                              user: snapshot.data![index].userId,
+                              imageUrl: imageUrl,
+                            );
+                          }));
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.network(
+                                  imageUrl,
+                                  height: 120,
+                                  width: 120,
+                                  fit: BoxFit.cover,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 12, left: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        snapshot.data![index].price.toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                          "${snapshot.data![index].address} ${snapshot.data![index].area}"),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 25),
+                                        child: OutlinedButton(
+                                            onPressed: () async{
+                                              openChatWithUser(
+                                                  userId: snapshot
+                                                      .data![index].userId);
+                                              HouseFunctions().addActiveChat(
+                                                  snapshot.data![index].userId);
+                                            },
+                                            child: Text('Chat')),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 12, right: 15),
+                              child: InkWell(
+                                  onTap: () {
+                                    HouseFunctions().toggleFavorite(
+                                        snapshot.data![index].houseId);
+                                    setState(() {
+                                      favoritedIcons[index] =
+                                          !favoritedIcons[index];
+                                    });
+                                  },
+                                  child: Icon(
+                                    favoritedIcons[index]
+                                        ? CupertinoIcons.heart_fill
+                                        : CupertinoIcons.heart,
+                                    color: favoritedIcons[index]
+                                        ? Colors.red
+                                        : null,
+                                  )),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }));
-              },
-            ),
-          ],
+                    );
+                  })),
+                ],
+              );
+            } else {
+              return Center(child: LinearProgressIndicator());
+            }
+          },
         ),
       ),
     );

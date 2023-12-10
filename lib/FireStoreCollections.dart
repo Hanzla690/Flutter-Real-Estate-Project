@@ -49,18 +49,14 @@ class FireStoreCollections {
 
   Future<List<UserModel>?> fetchUsers() async {
     UserModel currentUser = UserAuthentication.currentUser;
+    List userIds = currentUser.activeChats;
+    List<UserModel> users = [];
     try {
-      final documents =
-          await userCollection.where('id', isNotEqualTo: currentUser.id).get();
-      debugPrint(documents.docs.length.toString());
-      if (documents.docs.isNotEmpty) {
-        List<UserModel> users = documents.docs
-            .map((user) =>
-                UserModel.fromMap(user.data() as Map<String, dynamic>))
-            .toList();
-        debugPrint("User number: ${users.length.toString()}");
-        return users;
+      for (var element in userIds) {
+        var doc = await userCollection.doc(element).get();
+        users.add(UserModel.fromMap(doc.data() as Map<String, dynamic>));
       }
+      return users;
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -131,21 +127,22 @@ class FireStoreCollections {
         houses.add(HouseModel.fromMap(doc.data() as Map<String, dynamic>));
       }
     }
-    for (var element in houseIDs) {
-      var doc = await propertiesCollection
-          .doc("properties")
-          .collection("house_sell")
-          .doc(element)
-          .get();
-      if (doc.exists) {
-        houses.add(HouseModel.fromMap(doc.data() as Map<String, dynamic>));
-      }
-    }
+    // for (var element in houseIDs) {
+    //   var doc = await propertiesCollection
+    //       .doc("properties")
+    //       .collection("house_sell")
+    //       .doc(element)
+    //       .get();
+    //   if (doc.exists) {
+    //     houses.add(HouseModel.fromMap(doc.data() as Map<String, dynamic>));
+    //   }
+    // }
     return houses;
   }
 
-  updateFavorites() async {
+  updateUser() async {
     UserModel user = UserAuthentication.currentUser;
     await userCollection.doc(user.id).set(user.toJSON());
   }
+
 }

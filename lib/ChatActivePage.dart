@@ -41,34 +41,46 @@ class _ChatState extends State<Chat> {
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: FireStoreCollections().fetchMessages(recieverUser.id),
-              builder: (context, snapshot) {
-                messages = snapshot.data!.docs.map((message) => MessageModel.fromMap(message.data() as Map<String, dynamic>)).toList();
-                return ListView.builder(
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      bool isSent = messages[index].senderId != recieverUser.id;
-                      return Bubble(
-                        margin: isSent
-                            ? BubbleEdges.only(top: 10, right: 20)
-                            : BubbleEdges.only(top: 10, left: 20),
-                        padding: BubbleEdges.all(15),
-                        elevation: 5,
-                        nipRadius: 5,
-                        nipWidth: 30,
-                        nipHeight: 10,
-                        alignment: isSent ? Alignment.topRight : Alignment.topLeft,
-                        nip: isSent ? BubbleNip.rightBottom : BubbleNip.leftTop,
-                        color: isSent ? Colors.blue : Colors.grey[200],
-                        child: Text(
-                          messages[index].messageBody,
-                          style: TextStyle(
-                              color: isSent ? Colors.white : Colors.black),
-                        ),
-                      );
-                    });
-              }
-            ),
+                stream: FireStoreCollections().fetchMessages(recieverUser.id),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    messages = snapshot.data!.docs
+                        .map((message) => MessageModel.fromMap(
+                            message.data() as Map<String, dynamic>))
+                        .toList();
+                    return ListView.builder(
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          bool isSent =
+                              messages[index].senderId != recieverUser.id;
+                          return Bubble(
+                            margin: isSent
+                                ? BubbleEdges.only(top: 10, right: 20)
+                                : BubbleEdges.only(top: 10, left: 20),
+                            padding: BubbleEdges.all(15),
+                            elevation: 5,
+                            nipRadius: 5,
+                            nipWidth: 30,
+                            nipHeight: 10,
+                            alignment:
+                                isSent ? Alignment.topRight : Alignment.topLeft,
+                            nip: isSent
+                                ? BubbleNip.rightBottom
+                                : BubbleNip.leftTop,
+                            color: isSent ? Colors.blue : Colors.grey[200],
+                            child: Text(
+                              messages[index].messageBody,
+                              style: TextStyle(
+                                  color: isSent ? Colors.white : Colors.black),
+                            ),
+                          );
+                        });
+                  } else {
+                    return Center(
+                      child: LinearProgressIndicator(),
+                    );
+                  }
+                }),
           ),
           SizedBox(
             height: 15,
@@ -119,5 +131,4 @@ class _ChatState extends State<Chat> {
       ),
     );
   }
-
 }

@@ -29,90 +29,98 @@ class _FavoritesState extends State<Favorites> {
         FutureBuilder(
           future: FireStoreCollections().fetchFavorites(),
           builder: (context, snapshot) {
-            return Column(
-                children: List.generate(snapshot.data!.length, (index) {
-              if (favoritedIcons.length <= index) {
-                favoritedIcons.add(false);
-              }
-              for (var element in UserAuthentication.currentUser.favorites) {
-                if (snapshot.data![index].houseId == element) {
-                  favoritedIcons[index] = true;
+            if (snapshot.hasData) {
+              return Column(
+                  children: List.generate(snapshot.data!.length, (index) {
+                if (favoritedIcons.length <= index) {
+                  favoritedIcons.add(false);
                 }
-              }
-              return Container(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return HouseDetails(
-                        house: snapshot.data![index],
-                        user: snapshot.data![index].userId,
-                        imageUrl: imageUrl,
-                      );
-                    }));
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image.network(
-                            imageUrl,
-                            height: 120,
-                            width: 120,
-                            fit: BoxFit.cover,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 12, left: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  snapshot.data![index].price.toString(),
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                    "${snapshot.data![index].address} ${snapshot.data![index].area}"),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 25),
-                                  child: OutlinedButton(
-                                      onPressed: () {
-                                        // openChatWithUser(
-                                        //     userId: snapshot
-                                        //         .data![index].userId);
-                                      },
-                                      child: Text('Chat')),
-                                ),
-                              ],
+                for (var element in UserAuthentication.currentUser.favorites) {
+                  if (snapshot.data![index].houseId == element) {
+                    favoritedIcons[index] = true;
+                  }
+                }
+                return Container(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return HouseDetails(
+                          house: snapshot.data![index],
+                          user: snapshot.data![index].userId,
+                          imageUrl: imageUrl,
+                        );
+                      }));
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Image.network(
+                              imageUrl,
+                              height: 120,
+                              width: 120,
+                              fit: BoxFit.cover,
                             ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12, right: 15),
-                        child: InkWell(
-                            onTap: () {
-                              HouseFunctions().toggleFavorite(
-                                  snapshot.data![index].houseId);
-                              setState(() {
-                                favoritedIcons[index] = !favoritedIcons[index];
-                              });
-                            },
-                            child: Icon(
-                              favoritedIcons[index]
-                                  ? CupertinoIcons.heart_fill
-                                  : CupertinoIcons.heart,
-                              color: favoritedIcons[index] ? Colors.red : null,
-                            )),
-                      ),
-                    ],
+                            Padding(
+                              padding: EdgeInsets.only(top: 12, left: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    snapshot.data![index].price.toString(),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                      "${snapshot.data![index].address} ${snapshot.data![index].area}"),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 25),
+                                    child: OutlinedButton(
+                                        onPressed: () {
+                                          // openChatWithUser(
+                                          //     userId: snapshot
+                                          //         .data![index].userId);
+                                        },
+                                        child: Text('Chat')),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12, right: 15),
+                          child: InkWell(
+                              onTap: () {
+                                HouseFunctions().toggleFavorite(
+                                    snapshot.data![index].houseId);
+                                setState(() {
+                                  favoritedIcons[index] =
+                                      !favoritedIcons[index];
+                                });
+                              },
+                              child: Icon(
+                                favoritedIcons[index]
+                                    ? CupertinoIcons.heart_fill
+                                    : CupertinoIcons.heart,
+                                color:
+                                    favoritedIcons[index] ? Colors.red : null,
+                              )),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }));
+                );
+              }));
+            }else{
+
+              return LinearProgressIndicator();
+            }
           },
         ),
       ]),
