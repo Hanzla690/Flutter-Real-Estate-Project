@@ -1,3 +1,6 @@
+import 'dart:html' as html;
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/FireStoreCollections.dart';
 import 'package:flutter_project/HomePage.dart';
@@ -7,17 +10,60 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class CreatePost extends StatefulWidget {
-  const CreatePost({super.key});
+  final HouseModel? house;
+  final bool editMode;
+  const CreatePost({super.key, this.house, required this.editMode});
+  //int selected =0;
 
   @override
   State<CreatePost> createState() => _CreatePostState();
 }
 
 class _CreatePostState extends State<CreatePost> {
-  String currentPurpose = "Sell",
-      propertyType = 'House',
-      selectedCity = "Select a City",
-      areaSize = 'Marla';
+  int selected =0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.editMode) {
+      debugPrint("here");
+      setState(() {
+        currentPurpose = widget.house!.adPurpose;
+        propertyType = widget.house!.propertyType;
+        address = widget.house!.address;
+        area = widget.house!.area;
+        areaSize = widget.house!.areaSize.split(' ')[1];
+        areaSizeValue = widget.house!.areaSize.split(' ')[0];
+        description = widget.house!.description;
+        price = widget.house!.price.toString();
+        selectedCity = widget.house!.city;
+        title = widget.house!.title;
+        houseId = widget.house!.houseId;
+        editMode = widget.editMode;
+      });
+    } else {
+      currentPurpose = "Sell";
+      propertyType = "House";
+      areaSize = "Marla";
+      selectedCity = "select a city";
+      editMode = widget.editMode;
+    }
+  }
+
+  late String currentPurpose,
+      propertyType,
+      selectedCity,
+      areaSize,
+      houseId,
+      area,
+      address,
+      areaSizeValue,
+      price,
+      title,
+      description;
+  late bool editMode;
+
   final ImagePicker imagePicker = ImagePicker();
   TextEditingController areaController = TextEditingController();
   TextEditingController addressController = TextEditingController();
@@ -26,6 +72,7 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   List<XFile> images = [];
+  List<String> imageURLs = [];
 
   List<String> cities = ['Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Multan', 'Hyderabad',
     'Gujranwala', 'Peshawar', 'Islamabad', 'Bahawalpur', 'Sargodha', 'Sialkot', 'Quetta', 'Sukkur',
@@ -40,6 +87,14 @@ class _CreatePostState extends State<CreatePost> {
 
   @override
   Widget build(BuildContext context) {
+    if (editMode) {
+      areaController.text = area;
+      addressController.text = address;
+      priceController.text = price;
+      titleController.text = title;
+      descriptionController.text = description;
+      areaSizeController.text = areaSizeValue;
+    }
     return Scaffold(
       appBar: AppBar(
         elevation: 3,
@@ -272,6 +327,15 @@ class _CreatePostState extends State<CreatePost> {
                 height: 5,
               ),
               const Divider(thickness: 1,),
+              CustomRadio("Button1", 1),
+              SizedBox(height: 2,),
+              CustomRadio("Button2", 2),
+              SizedBox(height: 2,),
+              CustomRadio("Button3", 3),
+              const SizedBox(
+                height: 5,
+              ),
+              const Divider(thickness: 1,),
               ListTile(
                 title: const Text("Property's Area"),
                 subtitle: TextField(
@@ -378,12 +442,18 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   postAd() async {
-    final house_id = Uuid().v4();
+    String house_id;
+    if (editMode) {
+      house_id = houseId;
+    } else {
+      house_id = const Uuid().v4();
+    }
     final currentUser = UserAuthentication.currentUser;
     try {
       HouseModel house = HouseModel(
           houseId: house_id,
           userId: currentUser.id,
+          adPurpose: currentPurpose,
           propertyType: propertyType,
           city: selectedCity,
           area: areaController.text,
@@ -393,7 +463,7 @@ class _CreatePostState extends State<CreatePost> {
           title: titleController.text,
           description: descriptionController.text,
           creationTime: DateTime.now().toString());
-      await FireStoreCollections().createHouseAd(currentPurpose, house);
+      await FireStoreCollections().createHouseAd(house);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -404,7 +474,46 @@ class _CreatePostState extends State<CreatePost> {
     }
   }
 
+
   Future<void> pickImages() async {
     images = await imagePicker.pickMultiImage();
+    Reference imageFolder = FirebaseStorage.instance.ref().child('images');
+    List<Reference> imageRefs = [];
+    debugPrint(imageFolder.fullPath);
+    for (int i = 0; i < images.length; i++) {
+      debugPrint(images[i].name);
+      imageRefs.add(imageFolder.child(Uuid().v4()));
+      await imageRefs[i].putFile(File(images[i].path));
+      imageURLs[i] = await imageRefs[i].getDownloadURL();
+    }
+  }
+
+  Widget CustomRadio(String text, int index){
+    return OutlinedButton(
+      onPressed: () {
+        setState(() {
+          selected = index;
+        });
+      },
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<OutlinedBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        side: MaterialStateProperty.all<BorderSide>(
+          BorderSide(
+            color: (selected == index) ? Colors.green.shade500 : Colors.blueGrey, // Adjust the color as needed
+            width: 2.0, // Adjust the border size as needed
+          ),
+        ),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: (selected == index) ? Colors.green.shade500 : Colors.blueGrey,
+        ),
+      ),
+    );
   }
 }

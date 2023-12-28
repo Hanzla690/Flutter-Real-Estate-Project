@@ -4,6 +4,7 @@ import 'package:flutter_project/FireStoreCollections.dart';
 import 'package:flutter_project/Models/MessageModel.dart';
 import 'package:flutter_project/User%20Authentication/UserAuthentication.dart';
 import 'package:flutter_project/Models/UserModel.dart';
+import 'package:flutter_project/Widgets/bottom_nav_bar.dart';
 
 class Chat extends StatefulWidget {
   final UserModel user;
@@ -32,13 +33,15 @@ class _ChatState extends State<Chat> {
               child: Icon(Icons.person,
               color: Colors.green.shade500,),
             ),
-            SizedBox(
+            const SizedBox(
               width: 7,
             ),
             Text(recieverUser.username),
           ],
         ),
+        centerTitle: true,
       ),
+      bottomNavigationBar: const BottomNavBar(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -46,30 +49,45 @@ class _ChatState extends State<Chat> {
             child: StreamBuilder(
               stream: FireStoreCollections().fetchMessages(recieverUser.id),
               builder: (context, snapshot) {
-                messages = snapshot.data!.docs.map((message) => MessageModel.fromMap(message.data() as Map<String, dynamic>)).toList();
-                return ListView.builder(
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      bool isSent = messages[index].senderId != recieverUser.id;
-                      return Bubble(
-                        margin: isSent
-                            ? BubbleEdges.only(top: 10, right: 20)
-                            : BubbleEdges.only(top: 10, left: 20),
-                        padding: BubbleEdges.all(15),
-                        elevation: 5,
-                        nipRadius: 5,
-                        nipWidth: 30,
-                        nipHeight: 10,
-                        alignment: isSent ? Alignment.topRight : Alignment.topLeft,
-                        nip: isSent ? BubbleNip.rightBottom : BubbleNip.leftTop,
-                        color: isSent ? Colors.green.shade400 : Colors.grey[200],
-                        child: Text(
-                          messages[index].messageBody,
-                          style: TextStyle(
-                              color: isSent ? Colors.white : Colors.black),
-                        ),
-                      );
-                    });
+                if(snapshot.hasData) {
+                  messages = snapshot.data!.docs.map((message) =>
+                      MessageModel.fromMap(
+                          message.data() as Map<String, dynamic>)).toList();
+                  return ListView.builder(
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        bool isSent = messages[index].senderId !=
+                            recieverUser.id;
+                        return Bubble(
+                          margin: isSent
+                              ? BubbleEdges.only(top: 10, right: 20)
+                              : BubbleEdges.only(top: 10, left: 20),
+                          padding: BubbleEdges.all(15),
+                          elevation: 5,
+                          nipRadius: 5,
+                          nipWidth: 30,
+                          nipHeight: 10,
+                          alignment: isSent ? Alignment.topRight : Alignment
+                              .topLeft,
+                          nip: isSent ? BubbleNip.rightBottom : BubbleNip
+                              .leftTop,
+                          color: isSent ? Colors.green.shade400 : Colors
+                              .grey[200],
+                          child: Text(
+                            messages[index].messageBody,
+                            style: TextStyle(
+                                color: isSent ? Colors.white : Colors.black),
+                          ),
+                        );
+                      });
+                }
+                else{
+                  return const AlertDialog(
+                    actions: [
+                      LinearProgressIndicator()
+                    ],
+                  );
+                }
               }
             ),
           ),

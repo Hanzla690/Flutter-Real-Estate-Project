@@ -54,7 +54,7 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
               child: InkWell(
                   onTap: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const CreatePost()));
+                        MaterialPageRoute(builder: (context) =>  const CreatePost(editMode: false)));
                   },
                   child: const Icon(Icons.add))),
           Expanded(

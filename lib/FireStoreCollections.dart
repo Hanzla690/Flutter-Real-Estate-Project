@@ -10,11 +10,11 @@ import 'package:flutter_project/Models/UserModel.dart';
 
 class FireStoreCollections {
   final CollectionReference userCollection =
-      FirebaseFirestore.instance.collection('users');
+  FirebaseFirestore.instance.collection('users');
   final CollectionReference chatRoomCollection =
-      FirebaseFirestore.instance.collection('chat_rooms');
+  FirebaseFirestore.instance.collection('chat_rooms');
   final CollectionReference propertiesCollection =
-      FirebaseFirestore.instance.collection('properties');
+  FirebaseFirestore.instance.collection('properties');
   late CollectionReference reference;
 
   Future createUser(UserModel user) async {
@@ -47,20 +47,28 @@ class FireStoreCollections {
     return UserModel.fromMap(user.data() as Map<String, dynamic>);
   }
 
+  Future<UserModel?> getUserByEmail(String email) async{
+    var user = await userCollection.where('email', isEqualTo: email).get();
+    if(user.docs.isNotEmpty){
+      return UserModel.fromMap(user.docs[0].data() as Map<String, dynamic>);
+    }else{
+      return null;
+    }
+
+  }
+
+
+
   Future<List<UserModel>?> fetchUsers() async {
     UserModel currentUser = UserAuthentication.currentUser;
+    List userIds = currentUser.activeChats;
+    List<UserModel> users = [];
     try {
-      final documents =
-          await userCollection.where('id', isNotEqualTo: currentUser.id).get();
-      debugPrint(documents.docs.length.toString());
-      if (documents.docs.isNotEmpty) {
-        List<UserModel> users = documents.docs
-            .map((user) =>
-                UserModel.fromMap(user.data() as Map<String, dynamic>))
-            .toList();
-        debugPrint("User number: ${users.length.toString()}");
-        return users;
+      for (var element in userIds) {
+        var doc = await userCollection.doc(element).get();
+        users.add(UserModel.fromMap(doc.data() as Map<String, dynamic>));
       }
+      return users;
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -80,37 +88,53 @@ class FireStoreCollections {
         .snapshots();
   }
 
-  createHouseAd(String adPurpose, HouseModel house) async {
-    if (adPurpose == "Sell") {
-      reference =
-          propertiesCollection.doc('properties').collection("house_sell");
-    } else if (adPurpose == "Rent") {
-      reference =
-          propertiesCollection.doc('properties').collection("house_rent");
-    }
+  createHouseAd(HouseModel house) async {
     try {
-      await reference.doc(house.houseId).set(house.toJSON());
+      await propertiesCollection.doc(house.houseId).set(house.toJSON());
     } catch (e) {
       debugPrint(e.toString());
     }
   }
 
-  Future<List<HouseModel>?> fetchHouses(String adPurpose) async {
-    if (adPurpose == "Buy") {
-      reference =
-          propertiesCollection.doc('properties').collection("house_sell");
-    } else if (adPurpose == "Rent") {
-      reference =
-          propertiesCollection.doc('properties').collection("house_rent");
-    }
+  deleteHouseAd(String houseID) async {
     try {
-      final documents = await reference.get();
-      if (documents.docs.isNotEmpty) {
-        List<HouseModel> houses = documents.docs
-            .map((house) =>
-                HouseModel.fromMap(house.data() as Map<String, dynamic>))
+      await propertiesCollection.doc(houseID).delete();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<List<HouseModel>?> fetchHouses(
+      {userID, required bool searchMode, searchItem, String propertyType = 'House'}) async {
+    QuerySnapshot documents;
+    try {
+      if (searchMode) {
+        final snapshot =
+        await FirebaseFirestore.instance.collection('properties').where('propertyType', isEqualTo: propertyType).get();
+
+        List<HouseModel> houses = snapshot.docs
+            .map(
+                (doc) => HouseModel.fromMap(doc.data() as Map<String, dynamic>))
+            .where((house) =>
+            house.area.toLowerCase().contains(searchItem.toLowerCase()))
             .toList();
+
         return houses;
+      } else {
+        if (userID == null) {
+          documents = await propertiesCollection.where('propertyType', isEqualTo: propertyType).get();
+        } else {
+          documents = await propertiesCollection
+              .where('userId', isEqualTo: userID)
+              .get();
+        }
+        if (documents.docs.isNotEmpty) {
+          List<HouseModel> houses = documents.docs
+              .map((house) =>
+              HouseModel.fromMap(house.data() as Map<String, dynamic>))
+              .toList();
+          return houses;
+        }
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -118,25 +142,24 @@ class FireStoreCollections {
     return null;
   }
 
+  Future<List<HouseModel>> searchByArea(String searchItem) async {
+    final snapshot =
+    await FirebaseFirestore.instance.collection('properties').get();
+
+    List<HouseModel> searchResults = snapshot.docs
+        .map((doc) => HouseModel.fromMap(doc.data() as Map<String, dynamic>))
+        .where((house) =>
+        house.area.toLowerCase().contains(searchItem.toLowerCase()))
+        .toList();
+
+    return searchResults;
+  }
+
   Future<List<HouseModel>> fetchFavorites() async {
     List houseIDs = UserAuthentication.currentUser.favorites;
     List<HouseModel> houses = [];
     for (var element in houseIDs) {
-      var doc = await propertiesCollection
-          .doc("properties")
-          .collection("house_rent")
-          .doc(element)
-          .get();
-      if (doc.exists) {
-        houses.add(HouseModel.fromMap(doc.data() as Map<String, dynamic>));
-      }
-    }
-    for (var element in houseIDs) {
-      var doc = await propertiesCollection
-          .doc("properties")
-          .collection("house_sell")
-          .doc(element)
-          .get();
+      var doc = await propertiesCollection.doc(element).get();
       if (doc.exists) {
         houses.add(HouseModel.fromMap(doc.data() as Map<String, dynamic>));
       }
@@ -144,7 +167,7 @@ class FireStoreCollections {
     return houses;
   }
 
-  updateFavorites() async {
+  updateUser() async {
     UserModel user = UserAuthentication.currentUser;
     await userCollection.doc(user.id).set(user.toJSON());
   }

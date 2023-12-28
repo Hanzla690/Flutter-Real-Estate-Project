@@ -1,10 +1,20 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_project/AdPage.dart';
+import 'package:flutter_project/ChatsPage.dart';
+import 'package:flutter_project/CreateHousePostPage.dart';
+import 'package:flutter_project/FavoritesPage.dart';
+import 'package:flutter_project/HomePage.dart';
+import 'package:flutter_project/MyAds.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -39,7 +49,10 @@ class NavBar extends StatelessWidget {
               color: Colors.green.shade500,
             ),
             title: const Text("Home"),
-             onTap: () {},
+             onTap: () {
+               Navigator.pushReplacement(context, MaterialPageRoute(
+                   builder: (context) => const MyHomePage()));
+             },
           ),
           ListTile(
             selectedTileColor: Colors.teal.shade300,
@@ -48,7 +61,10 @@ class NavBar extends StatelessWidget {
               color: Colors.green.shade500,
             ),
             title: const Text("Favourites"),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => const Favorites()));
+            },
           ),
           ListTile(
             selectedTileColor: Colors.teal.shade300,
@@ -57,6 +73,10 @@ class NavBar extends StatelessWidget {
               color: Colors.green.shade500,
             ),
             title: const Text("Chats"),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => const Chats()));
+            },
           ),
           ListTile(
             selectedTileColor: Colors.teal.shade300,
@@ -64,24 +84,35 @@ class NavBar extends StatelessWidget {
                 Icons.add_circle_outline,
               color: Colors.green.shade500,
             ),
-            title: const Text("Post Property Ad")
+            title: const Text("Post Property Ad"),
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => const CreatePost(editMode: false)));
+            },
           ),
-          // ListTile(
-          //   selectedTileColor: Colors.teal.shade300,
-          //   leading: const Icon(
-          //       Icons.people_alt_outlined
-          //   ),
-          //   title: const Text("Teams"),
-          //   onTap: () => print("teams\n"),
-          // ),
-          // ListTile(
-          //   selectedTileColor: Colors.teal.shade300,
-          //   leading: const Icon(
-          //       Icons.settings_accessibility_outlined
-          //   ),
-          //   title: const Text("Standings"),
-          //   onTap: () => print("standings\n"),
-          //)
+          ListTile(
+            selectedTileColor: Colors.teal.shade300,
+            leading: Icon(
+                Icons.ads_click_outlined,
+              color: Colors.green.shade500,
+            ),
+            title: const Text("My Ads"),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => const MyAdsPage()));
+            },
+          ),
+          ListTile(
+            selectedTileColor: Colors.teal.shade300,
+            leading: const Icon(
+                Icons.settings_accessibility_outlined
+            ),
+            title: const Text("Ad Check"),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => const AdPage()));
+            },
+          )
         ],
       ),
     );
