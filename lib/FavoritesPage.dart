@@ -30,9 +30,28 @@ class _FavoritesState extends State<Favorites> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Favourites'),
-          centerTitle: true,
-          backgroundColor: Colors.blue.shade200),
+      // appBar: AppBar(title: const Text('Favourites'),
+      //     centerTitle: true,
+      //     backgroundColor: Colors.blue.shade200),
+      appBar: AppBar(
+        elevation: 3,
+        backgroundColor: Colors.white,
+        toolbarHeight: 80,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.favorite_outline,
+              color: Colors.green.shade500,
+            ),
+            const Text("Favourites",
+              style: TextStyle(
+                  color: Colors.black
+              ),),
+          ],
+        ),
+        centerTitle: true,
+      ),
       bottomNavigationBar: const BottomNavBar(),
       body: ListView(children: [
         FutureBuilder(

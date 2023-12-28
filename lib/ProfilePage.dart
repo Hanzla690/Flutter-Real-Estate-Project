@@ -25,9 +25,28 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      //   title: const Text('App'),
+      //   backgroundColor: Colors.blue.shade200,
+      // ),
       appBar: AppBar(
-        title: const Text('App'),
-        backgroundColor: Colors.blue.shade200,
+        elevation: 3,
+        backgroundColor: Colors.white,
+        toolbarHeight: 80,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.person,
+              color: Colors.green.shade500,
+            ),
+            const Text("Profile",
+              style: TextStyle(
+                  color: Colors.black
+              ),),
+          ],
+        ),
+        centerTitle: true,
       ),
       bottomNavigationBar: const BottomNavBar(),
       body: Padding(

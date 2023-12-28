@@ -23,6 +23,7 @@ class _ChatsState extends State<Chats> {
         backgroundColor: Colors.white,
         toolbarHeight: 80,
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.chat_outlined,

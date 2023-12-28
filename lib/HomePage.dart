@@ -23,6 +23,7 @@ import 'package:flutter_project/Widgets/search_field.dart';
 import 'package:flutter_project/Widgets/select_cat.dart';
 import 'package:flutter_project/Widgets/suggestion_list.dart';
 import 'package:flutter_project/firebase_options.dart';
+import 'package:flutter_project/splashscreen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'Widgets/customAppBar.dart';
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade200),
         useMaterial3: true,
       ),
-      home: const Login(),
+      home: const SplashScreen(),
     scrollBehavior: const MaterialScrollBehavior().copyWith(
     dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown},)
     );
@@ -95,6 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.white,
         toolbarHeight: 80,
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.location_on,

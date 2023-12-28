@@ -7,6 +7,7 @@ import 'package:flutter_project/CreateHousePostPage.dart';
 import 'package:flutter_project/FavoritesPage.dart';
 import 'package:flutter_project/HomePage.dart';
 import 'package:flutter_project/MyAds.dart';
+import 'package:flutter_project/User%20Authentication/UserAuthentication.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class NavBar extends StatelessWidget {
@@ -23,21 +24,27 @@ class NavBar extends StatelessWidget {
             decoration: const BoxDecoration(
               image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage("https://images.unsplash.com/photo-1602472097151-72eeec7a3185?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTl8fHxlbnwwfHx8fHw%3D")
+                  image: AssetImage("assets/bghome.jpg")
               ),
               color: Colors.teal,
             ),
-              accountName: const Text("Malik Riaz",
-              style: TextStyle(
+              accountName: Text(UserAuthentication.currentUser.username,
+              style: const TextStyle(
+                color: Colors.black,
                 fontSize: 20.0,
               )),
-              accountEmail: const Text("messi@barca.com"),
+              accountEmail: Text(UserAuthentication.currentUser.email,
+              style: const TextStyle(
+                color: Colors.black
+              ),),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
-                child: Image.asset("assets/malikriaz.jpg",
-                width: 90,
-                height: 90,
-                  fit: BoxFit.cover,
+                child: Icon(Icons.person,
+                size: 90,
+                color: Colors.green.shade500,
+                // width: 90,
+                // height: 90,
+                //   fit: BoxFit.cover,
                 ),
               ),
             ),

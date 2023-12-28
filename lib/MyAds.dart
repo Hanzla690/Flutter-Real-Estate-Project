@@ -23,9 +23,28 @@ class _MyAdsPageState extends State<MyAdsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      //   title: Text('App'),
+      //   backgroundColor: Colors.blue.shade200,
+      // ),
       appBar: AppBar(
-        title: Text('App'),
-        backgroundColor: Colors.blue.shade200,
+        elevation: 3,
+        backgroundColor: Colors.white,
+        toolbarHeight: 80,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.ads_click_outlined,
+              color: Colors.green.shade500,
+            ),
+            const Text("My Ads",
+              style: TextStyle(
+                  color: Colors.black
+              ),),
+          ],
+        ),
+        centerTitle: true,
       ),
       bottomNavigationBar: const BottomNavBar(),
       body: Padding(

@@ -101,6 +101,7 @@ class _CreatePostState extends State<CreatePost> {
         backgroundColor: Colors.white,
         toolbarHeight: 60,
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.add_circle,
