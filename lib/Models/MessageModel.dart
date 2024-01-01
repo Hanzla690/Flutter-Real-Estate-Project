@@ -5,6 +5,7 @@ class MessageModel {
       senderName,
       messageBody,
       messageTime;
+  bool isImage;
 
   MessageModel(
       {required this.recieverId,
@@ -12,7 +13,8 @@ class MessageModel {
       required this.senderId,
       required this.senderName,
       required this.messageBody,
-      required this.messageTime});
+      required this.messageTime,
+      required this.isImage});
 
   Map<String, dynamic> toJSON() {
     return {
@@ -22,6 +24,7 @@ class MessageModel {
       'senderName': senderName,
       'messageBody': messageBody,
       'messageTime': messageTime,
+      'isImage': isImage,
     };
   }
 
@@ -32,6 +35,7 @@ class MessageModel {
         senderId: json['senderId'],
         senderName: json['senderName'],
         messageBody: json['messageBody'],
-        messageTime: json['messageTime']);
+        messageTime: json['messageTime'],
+        isImage: json['isImage']);
   }
 }

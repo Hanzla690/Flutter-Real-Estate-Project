@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:bubble/bubble.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/FireStoreCollections.dart';
 import 'package:flutter_project/Models/MessageModel.dart';
 import 'package:flutter_project/User%20Authentication/UserAuthentication.dart';
 import 'package:flutter_project/Models/UserModel.dart';
-import 'package:flutter_project/Widgets/bottom_nav_bar.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 class Chat extends StatefulWidget {
   final UserModel user;
@@ -15,10 +20,18 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
   List<MessageModel> messages = [];
   final UserModel recieverUser;
   TextEditingController messageController = TextEditingController();
+  ScrollController scrollController = ScrollController();
+  final ImagePicker imagePicker = ImagePicker();
   _ChatState(this.recieverUser);
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,66 +43,74 @@ class _ChatState extends State<Chat> {
             CircleAvatar(
               backgroundColor: Colors.green.shade100,
               radius: 18,
-              child: Icon(Icons.person,
-              color: Colors.green.shade500,),
+              child: Icon(
+                Icons.person,
+                color: Colors.green.shade500,
+              ),
             ),
-            const SizedBox(
+            SizedBox(
               width: 7,
             ),
             Text(recieverUser.username),
           ],
         ),
-        centerTitle: true,
       ),
-      bottomNavigationBar: const BottomNavBar(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: FireStoreCollections().fetchMessages(recieverUser.id),
-              builder: (context, snapshot) {
-                if(snapshot.hasData) {
-                  messages = snapshot.data!.docs.map((message) =>
-                      MessageModel.fromMap(
-                          message.data() as Map<String, dynamic>)).toList();
-                  return ListView.builder(
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        bool isSent = messages[index].senderId !=
-                            recieverUser.id;
-                        return Bubble(
-                          margin: isSent
-                              ? BubbleEdges.only(top: 10, right: 20)
-                              : BubbleEdges.only(top: 10, left: 20),
-                          padding: BubbleEdges.all(15),
-                          elevation: 5,
-                          nipRadius: 5,
-                          nipWidth: 30,
-                          nipHeight: 10,
-                          alignment: isSent ? Alignment.topRight : Alignment
-                              .topLeft,
-                          nip: isSent ? BubbleNip.rightBottom : BubbleNip
-                              .leftTop,
-                          color: isSent ? Colors.green.shade400 : Colors
-                              .grey[200],
-                          child: Text(
-                            messages[index].messageBody,
-                            style: TextStyle(
-                                color: isSent ? Colors.white : Colors.black),
-                          ),
-                        );
-                      });
-                }
-                else{
-                  return const AlertDialog(
-                    actions: [
-                      LinearProgressIndicator()
-                    ],
-                  );
-                }
-              }
-            ),
+                stream: FireStoreCollections().fetchMessages(recieverUser.id),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    messages = snapshot.data!.docs
+                        .map((message) => MessageModel.fromMap(
+                            message.data() as Map<String, dynamic>))
+                        .toList();
+                    WidgetsBinding.instance!.addPostFrameCallback((_) {
+                      if (scrollController.hasClients) {
+                        scrollController
+                            .jumpTo(scrollController.position.maxScrollExtent);
+                      }
+                    });
+                    return ListView.builder(
+                        controller: scrollController,
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          bool isSent =
+                              messages[index].senderId != recieverUser.id;
+                          return Bubble(
+                            margin: isSent
+                                ? BubbleEdges.only(top: 10, right: 20)
+                                : BubbleEdges.only(top: 10, left: 20),
+                            padding: BubbleEdges.all(15),
+                            elevation: 5,
+                            nipRadius: 5,
+                            nipWidth: 30,
+                            nipHeight: 10,
+                            alignment:
+                                isSent ? Alignment.topRight : Alignment.topLeft,
+                            nip: isSent
+                                ? BubbleNip.rightBottom
+                                : BubbleNip.leftTop,
+                            color: isSent
+                                ? Colors.green.shade400
+                                : Colors.grey[200],
+                            child: messages[index].isImage
+                                ? Image.network(messages[index].messageBody)
+                                : Text(
+                                    messages[index].messageBody,
+                                    style: TextStyle(
+                                        color: isSent
+                                            ? Colors.white
+                                            : Colors.black),
+                                  ),
+                          );
+                        });
+                  } else {
+                    return Center(child: LinearProgressIndicator());
+                  }
+                }),
           ),
           SizedBox(
             height: 15,
@@ -97,10 +118,15 @@ class _ChatState extends State<Chat> {
           Container(
               color: Colors.white,
               child: Row(children: [
-                SizedBox(width: 1),
-                Icon(Icons.tag_faces),
-                SizedBox(width: 1,),
-                Icon(Icons.attach_file),
+                SizedBox(
+                  width: 1,
+                ),
+                InkWell(
+                    onTap: () async {
+                      String imageURL = await pickImage();
+                      sendMessage(imageURL: imageURL, isImage: true);
+                    },
+                    child: Icon(Icons.attach_file)),
                 SizedBox(
                   width: 8,
                 ),
@@ -116,20 +142,8 @@ class _ChatState extends State<Chat> {
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: InkWell(
-                    onTap: () async {
-                      UserModel currentUser =
-                          await UserAuthentication.currentUser;
-                      MessageModel message = MessageModel(
-                          recieverId: recieverUser.id,
-                          recieverName: recieverUser.username,
-                          senderId: currentUser.id,
-                          senderName: currentUser.username,
-                          messageBody: messageController.text,
-                          messageTime: DateTime.now().toString());
-                      await FireStoreCollections().createMessage(message);
-                      setState(() {
-                        messageController.text = "";
-                      });
+                    onTap: () {
+                      sendMessage(isImage: false);
                     },
                     child: Icon(
                       Icons.send,
@@ -143,4 +157,43 @@ class _ChatState extends State<Chat> {
     );
   }
 
+  sendMessage({imageURL, isImage}) async {
+    UserModel currentUser = UserAuthentication.currentUser;
+    bool isMessageImage = isImage;
+    String messageContent;
+    if (imageURL != null) {
+      messageContent = imageURL;
+    } else {
+      messageContent = messageController.text;
+    }
+    MessageModel message = MessageModel(
+        recieverId: recieverUser.id,
+        recieverName: recieverUser.username,
+        senderId: currentUser.id,
+        senderName: currentUser.username,
+        messageBody: messageContent,
+        messageTime: DateTime.now().toString(),
+        isImage: isMessageImage);
+    await FireStoreCollections().createMessage(message);
+    scrollToBottom();
+    setState(() {
+      messageController.text = "";
+    });
+  }
+
+  void scrollToBottom() {
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+    }
+  }
+
+  Future<String> pickImage() async {
+    XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+    Reference rootFolder = FirebaseStorage.instance.ref();
+    Reference imageFolder = rootFolder.child('images');
+    final imageRef = imageFolder.child(Uuid().v4());
+    imageRef.putFile(File(image!.path));
+    String imageURL = await imageRef.getDownloadURL();
+    return imageURL;
+  }
 }

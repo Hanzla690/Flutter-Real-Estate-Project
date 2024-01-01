@@ -38,7 +38,7 @@ class _ChatsState extends State<Chats> {
         centerTitle: true,
 
       ),
-      bottomNavigationBar: const BottomNavBar(),
+      bottomNavigationBar: const CustomBottomAppBar(),
       body: FutureBuilder(
         future: FireStoreCollections().fetchUsers(),
         builder: (context, snapshot) {

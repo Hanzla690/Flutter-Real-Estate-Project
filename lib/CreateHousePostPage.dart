@@ -1,12 +1,14 @@
 import 'dart:html' as html;
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/FireStoreCollections.dart';
 import 'package:flutter_project/HomePage.dart';
 import 'package:flutter_project/Models/HouseModel.dart';
 import 'package:flutter_project/User%20Authentication/UserAuthentication.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:searchfield/searchfield.dart';
 import 'package:uuid/uuid.dart';
 
 class CreatePost extends StatefulWidget {
@@ -20,7 +22,7 @@ class CreatePost extends StatefulWidget {
 }
 
 class _CreatePostState extends State<CreatePost> {
-  int selected =0;
+  int selected = 0;
 
   @override
   void initState() {
@@ -71,18 +73,79 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController priceController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController searchCityController = TextEditingController();
   List<XFile> images = [];
   List<String> imageURLs = [];
 
-  List<String> cities = ['Karachi', 'Lahore', 'Faisalabad', 'Rawalpindi', 'Multan', 'Hyderabad',
-    'Gujranwala', 'Peshawar', 'Islamabad', 'Bahawalpur', 'Sargodha', 'Sialkot', 'Quetta', 'Sukkur',
-    'Jhang', 'Shekhupura', 'Mardan', 'Gujrat', 'Larkana', 'Kasur', 'Rahim Yar Khan', 'Sahiwal',
-    'Okara', 'Wah Cantonment', 'Dera Ghazi Khan', 'Mingora', 'Mirpur Khas', 'Chiniot', 'Nawabshah',
-    'Kāmoke', 'Burewala', 'Jhelum', 'Sadiqabad', 'Khanewal', 'Hafizabad', 'Kohat', 'Jacobabad', 'Shikarpur',
-    'Muzaffargarh', 'Khanpur', 'Gojra', 'Bahawalnagar', 'Abbottabad', 'Muridke', 'Pakpattan', 'Khuzdar',
-    'Jaranwala', 'Chishtian', 'Daska', 'Bhalwal', 'Mandi Bahauddin', 'Ahmadpur East', 'Kamalia', 'Tando Adam', 'Khairpur',
-    'Dera Ismail Khan', 'Vehari', 'Nowshera', 'Dadu', 'Wazirabad', 'Khushab', 'Charsada', 'Swabi', 'Chakwal',
-    'Mianwali', 'Tando Allahyar', 'Kot Adu', 'Turbat'
+  List<String> cities = [
+    'Karachi',
+    'Lahore',
+    'Faisalabad',
+    'Rawalpindi',
+    'Multan',
+    'Hyderabad',
+    'Gujranwala',
+    'Peshawar',
+    'Islamabad',
+    'Bahawalpur',
+    'Sargodha',
+    'Sialkot',
+    'Quetta',
+    'Sukkur',
+    'Jhang',
+    'Shekhupura',
+    'Mardan',
+    'Gujrat',
+    'Larkana',
+    'Kasur',
+    'Rahim Yar Khan',
+    'Sahiwal',
+    'Okara',
+    'Wah Cantonment',
+    'Dera Ghazi Khan',
+    'Mingora',
+    'Mirpur Khas',
+    'Chiniot',
+    'Nawabshah',
+    'Kāmoke',
+    'Burewala',
+    'Jhelum',
+    'Sadiqabad',
+    'Khanewal',
+    'Hafizabad',
+    'Kohat',
+    'Jacobabad',
+    'Shikarpur',
+    'Muzaffargarh',
+    'Khanpur',
+    'Gojra',
+    'Bahawalnagar',
+    'Abbottabad',
+    'Muridke',
+    'Pakpattan',
+    'Khuzdar',
+    'Jaranwala',
+    'Chishtian',
+    'Daska',
+    'Bhalwal',
+    'Mandi Bahauddin',
+    'Ahmadpur East',
+    'Kamalia',
+    'Tando Adam',
+    'Khairpur',
+    'Dera Ismail Khan',
+    'Vehari',
+    'Nowshera',
+    'Dadu',
+    'Wazirabad',
+    'Khushab',
+    'Charsada',
+    'Swabi',
+    'Chakwal',
+    'Mianwali',
+    'Tando Allahyar',
+    'Kot Adu',
+    'Turbat'
   ];
 
   @override
@@ -107,15 +170,14 @@ class _CreatePostState extends State<CreatePost> {
               Icons.add_circle,
               color: Colors.green.shade500,
             ),
-            const Text("Post Ad",
-              style: TextStyle(
-                  color: Colors.black
-              ),),
+            const Text(
+              "Post Ad",
+              style: TextStyle(color: Colors.black),
+            ),
           ],
         ),
         centerTitle: true,
       ),
-
       body: ListView(
         children: [
           Column(
@@ -125,36 +187,39 @@ class _CreatePostState extends State<CreatePost> {
                 height: 250,
                 width: double.infinity,
                 decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(18),
-                      bottomRight: Radius.circular(18)),
-                  image: DecorationImage(
-                      image: AssetImage("assets/minimalHouse.jpg"),
-                  fit: BoxFit.cover)
-                ),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(18),
+                        bottomRight: Radius.circular(18)),
+                    image: DecorationImage(
+                        image: AssetImage("assets/minimalHouse.jpg"),
+                        fit: BoxFit.cover)),
               ),
-              const SizedBox(height: 12,),
+              const SizedBox(
+                height: 12,
+              ),
               ListTile(
                 title: const Text("Ad Title"),
                 subtitle: TextField(
                     controller: titleController,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            width: 2,
-                            color: Colors.green.shade500),
+                        borderSide:
+                            BorderSide(width: 2, color: Colors.green.shade500),
                         borderRadius: BorderRadius.circular(40.0),
                       ),
                       hintText: 'Enter a title',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                    )
+                    )),
+                leading: Icon(
+                  Icons.title,
+                  color: Colors.green.shade500,
                 ),
-                leading: Icon(Icons.title,
-                  color: Colors.green.shade500,),
               ),
-              SizedBox(height: 5,),
+              SizedBox(
+                height: 5,
+              ),
               InkWell(
                 onTap: () {
                   showModalBottomSheet(
@@ -168,15 +233,20 @@ class _CreatePostState extends State<CreatePost> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(top: 12),
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Search City',
-                                    prefixIcon: Icon(Icons.search,
-                                      color: Colors.green.shade500,),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                  ),
+                                child: SearchField(
+                                  controller: searchCityController,
+                                  searchInputDecoration: InputDecoration(
+                                      prefixIcon: Icon(CupertinoIcons.search, color: Colors.green.shade500,)),
+                                  suggestions: cities
+                                      .map((city) => SearchFieldListItem(city))
+                                      .toList(),
+                                  onSuggestionTap: (searchResult) {
+                                    setState(() {
+                                      selectedCity = searchResult.searchKey;
+                                    });
+                                    Navigator.pop(context);
+                                    searchCityController.clear();
+                                  },
                                 ),
                               ),
                               Expanded(
@@ -185,7 +255,7 @@ class _CreatePostState extends State<CreatePost> {
                                   itemBuilder: (context, index) {
                                     return Padding(
                                       padding: const EdgeInsets.only(
-                                          top: 14, left: 14),
+                                          top: 12, left: 12),
                                       child: InkWell(
                                         onTap: () {
                                           setState(() {
@@ -195,7 +265,7 @@ class _CreatePostState extends State<CreatePost> {
                                         },
                                         child: Text(
                                           cities[index],
-                                          style: const TextStyle(fontSize: 16),
+                                          style: TextStyle(fontSize: 16),
                                         ),
                                       ),
                                     );
@@ -208,12 +278,10 @@ class _CreatePostState extends State<CreatePost> {
                       });
                 },
                 child: ListTile(
-                  title: const Text("City"),
+                  title: Text("City"),
                   subtitle: Text(selectedCity),
-                  leading: Icon(Icons.location_on,
-                    color: Colors.green.shade500,),
-                  trailing: Icon(Icons.arrow_right,
-                    color: Colors.green.shade500,),
+                  leading: Icon(Icons.location_on, color: Colors.green.shade500),
+                  trailing: Icon(Icons.arrow_right, color: Colors.green.shade500),
                 ),
               ),
               const SizedBox(
@@ -224,13 +292,14 @@ class _CreatePostState extends State<CreatePost> {
                 decoration: InputDecoration(
                   hintText: 'Area',
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        width: 2,
-                        color: Colors.green.shade500),
+                    borderSide:
+                        BorderSide(width: 2, color: Colors.green.shade500),
                     borderRadius: BorderRadius.circular(40.0),
                   ),
-                  prefixIcon: Icon(Icons.location_history,
-                    color: Colors.green.shade500,),
+                  prefixIcon: Icon(
+                    Icons.location_history,
+                    color: Colors.green.shade500,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
@@ -243,12 +312,10 @@ class _CreatePostState extends State<CreatePost> {
                 controller: addressController,
                 decoration: InputDecoration(
                   hintText: 'Address',
-                  prefixIcon: Icon(Icons.search,
-                      color: Colors.green.shade500),
+                  prefixIcon: Icon(Icons.search, color: Colors.green.shade500),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        width: 2,
-                        color: Colors.green.shade500),
+                    borderSide:
+                        BorderSide(width: 2, color: Colors.green.shade500),
                     borderRadius: BorderRadius.circular(40.0),
                   ),
                   border: OutlineInputBorder(
@@ -256,8 +323,12 @@ class _CreatePostState extends State<CreatePost> {
                   ),
                 ),
               ),
-              const SizedBox(height: 5,),
-              const Divider(thickness: 1,),
+              const SizedBox(
+                height: 5,
+              ),
+              const Divider(
+                thickness: 1,
+              ),
               RadioListTile(
                   title: const Text('Sell'),
                   value: 'Sell',
@@ -283,7 +354,9 @@ class _CreatePostState extends State<CreatePost> {
               const SizedBox(
                 height: 5,
               ),
-              const Divider(thickness: 1,),
+              const Divider(
+                thickness: 1,
+              ),
               const Padding(
                 padding: EdgeInsets.only(left: 10),
                 child: Text(
@@ -327,16 +400,9 @@ class _CreatePostState extends State<CreatePost> {
               const SizedBox(
                 height: 5,
               ),
-              const Divider(thickness: 1,),
-              CustomRadio("Button1", 1),
-              SizedBox(height: 2,),
-              CustomRadio("Button2", 2),
-              SizedBox(height: 2,),
-              CustomRadio("Button3", 3),
-              const SizedBox(
-                height: 5,
+              const Divider(
+                thickness: 1,
               ),
-              const Divider(thickness: 1,),
               ListTile(
                 title: const Text("Property's Area"),
                 subtitle: TextField(
@@ -345,8 +411,10 @@ class _CreatePostState extends State<CreatePost> {
                       hintText: 'Enter area size',
                       border: UnderlineInputBorder()),
                 ),
-                leading: Icon(Icons.area_chart,
-                color: Colors.green.shade500,),
+                leading: Icon(
+                  Icons.area_chart,
+                  color: Colors.green.shade500,
+                ),
                 trailing: DropdownButton(
                     value: areaSize,
                     onChanged: (value) {
@@ -366,24 +434,27 @@ class _CreatePostState extends State<CreatePost> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            width: 2,
-                            color: Colors.green.shade500),
+                        borderSide:
+                            BorderSide(width: 2, color: Colors.green.shade500),
                         borderRadius: BorderRadius.circular(40.0),
                       ),
                       hintText: 'Enter Price',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20)
-                      )),
+                          borderRadius: BorderRadius.circular(20))),
                 ),
-                leading: Icon(Icons.money,
-                color: Colors.green.shade500,),
+                leading: Icon(
+                  Icons.money,
+                  color: Colors.green.shade500,
+                ),
               ),
-              const SizedBox(height: 5,),
+              const SizedBox(
+                height: 5,
+              ),
               const Divider(
                 thickness: 1,
-              indent: 5,
-              endIndent: 5,),
+                indent: 5,
+                endIndent: 5,
+              ),
               ListTile(
                 title: const Text("Property Description"),
                 subtitle: TextField(
@@ -392,49 +463,50 @@ class _CreatePostState extends State<CreatePost> {
                   controller: descriptionController,
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 3,
-                        color: Colors.green.shade500)
-                    ),
-                      hintText: 'Describe your property in detail',
-                     // border: UnderlineInputBorder()
+                        borderSide:
+                            BorderSide(width: 3, color: Colors.green.shade500)),
+                    hintText: 'Describe your property in detail',
+                    // border: UnderlineInputBorder()
                   ),
                 ),
-                leading: Icon(Icons.description,
-                color: Colors.green.shade500,),
+                leading: Icon(
+                  Icons.description,
+                  color: Colors.green.shade500,
+                ),
               ),
               ListTile(
                 title: const Text('Upload Pictures'),
-                leading: Icon(Icons.image,
-                color: Colors.green.shade500,),
+                leading: Icon(
+                  Icons.image,
+                  color: Colors.green.shade500,
+                ),
                 trailing: ElevatedButton(
-                    onPressed: pickImages,
+                  onPressed: pickImages,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade500
+                      backgroundColor: Colors.green.shade500),
+                  child: const Text(
+                    "Select Pictures",
+                    style: TextStyle(color: Colors.white),
                   ),
-                    child: const Text("Select Pictures",
-                    style: TextStyle(
-                      color: Colors.white
-                    ),),
                 ),
               ),
-              const SizedBox(height: 12,),
+              const SizedBox(
+                height: 12,
+              ),
               Align(
                   alignment: Alignment.bottomCenter,
                   child: ElevatedButton(
-                      onPressed: postAd,
+                    onPressed: postAd,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green.shade500
+                        backgroundColor: Colors.green.shade500),
+                    child: const Text(
+                      "Post this Ad",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.white),
                     ),
-                      child: const Text(
-                        "Post this Ad",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.white),
-                      ),
-                  )
-              ),
+                  )),
             ],
           )
         ],
@@ -442,12 +514,35 @@ class _CreatePostState extends State<CreatePost> {
     );
   }
 
-  postAd() async {
+  void postAd() async {
+    if (selectedCity.isEmpty ||
+        areaController.text.isEmpty ||
+        addressController.text.isEmpty ||
+        areaSizeController.text.isEmpty ||
+        priceController.text.isEmpty ||
+        titleController.text.isEmpty ||
+        descriptionController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Couldn\'t Login'),
+          content: Text('Fields can\'t be empty'),
+          actions: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Close'))
+          ],
+        ),
+      );
+      return;
+    }
     String house_id;
     if (editMode) {
       house_id = houseId;
     } else {
-      house_id = const Uuid().v4();
+      house_id = Uuid().v4();
     }
     final currentUser = UserAuthentication.currentUser;
     try {
@@ -463,7 +558,8 @@ class _CreatePostState extends State<CreatePost> {
           price: int.parse(priceController.text),
           title: titleController.text,
           description: descriptionController.text,
-          creationTime: DateTime.now().toString());
+          creationTime: DateTime.now().toString(),
+          imageURLs: imageURLs);
       await FireStoreCollections().createHouseAd(house);
       Navigator.pushReplacement(
           context,
@@ -475,21 +571,22 @@ class _CreatePostState extends State<CreatePost> {
     }
   }
 
-
   Future<void> pickImages() async {
     images = await imagePicker.pickMultiImage();
-    Reference imageFolder = FirebaseStorage.instance.ref().child('images');
+    Reference rootFolder = FirebaseStorage.instance.ref();
+    Reference imageFolder = rootFolder.child('images');
     List<Reference> imageRefs = [];
     debugPrint(imageFolder.fullPath);
     for (int i = 0; i < images.length; i++) {
       debugPrint(images[i].name);
       imageRefs.add(imageFolder.child(Uuid().v4()));
       await imageRefs[i].putFile(File(images[i].path));
+      debugPrint('here');
       imageURLs[i] = await imageRefs[i].getDownloadURL();
     }
   }
 
-  Widget CustomRadio(String text, int index){
+  Widget CustomRadio(String text, int index) {
     return OutlinedButton(
       onPressed: () {
         setState(() {
@@ -504,7 +601,9 @@ class _CreatePostState extends State<CreatePost> {
         ),
         side: MaterialStateProperty.all<BorderSide>(
           BorderSide(
-            color: (selected == index) ? Colors.green.shade500 : Colors.blueGrey, // Adjust the color as needed
+            color: (selected == index)
+                ? Colors.green.shade500
+                : Colors.blueGrey, // Adjust the color as needed
             width: 2.0, // Adjust the border size as needed
           ),
         ),

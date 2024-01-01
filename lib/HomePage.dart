@@ -5,23 +5,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_project/ChatActivePage.dart';
-import 'package:flutter_project/ChatsPage.dart';
-import 'package:flutter_project/CreateHousePostPage.dart';
 import 'package:flutter_project/DetailsPage.dart';
-import 'package:flutter_project/FavoritesPage.dart';
 import 'package:flutter_project/FireStoreCollections.dart';
 import 'package:flutter_project/HouseDetailsPage.dart';
 import 'package:flutter_project/HouseFunctions.dart';
-import 'package:flutter_project/Models/HouseModel.dart';
 import 'package:flutter_project/Models/UserModel.dart';
 import 'package:flutter_project/User%20Authentication/LoginPage.dart';
-import 'package:flutter_project/ProfilePage.dart';
 import 'package:flutter_project/User%20Authentication/UserAuthentication.dart';
 import 'package:flutter_project/Widgets/bottom_nav_bar.dart';
 import 'package:flutter_project/Widgets/drawer.dart';
 import 'package:flutter_project/Widgets/search_field.dart';
 import 'package:flutter_project/Widgets/select_cat.dart';
-import 'package:flutter_project/Widgets/suggestion_list.dart';
 import 'package:flutter_project/firebase_options.dart';
 import 'package:flutter_project/splashscreen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -31,7 +25,7 @@ import 'Widgets/customAppBar.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
- // await MobileAds.instance.initialize();
+  // await MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 
@@ -41,16 +35,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Apna Ghar',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade200),
-        useMaterial3: true,
-      ),
-      home: const SplashScreen(),
-    scrollBehavior: const MaterialScrollBehavior().copyWith(
-    dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown},)
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Pak Homes',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade200),
+          useMaterial3: true,
+        ),
+        home: const SplashScreen(),
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
+          dragDevices: {
+            PointerDeviceKind.mouse,
+            PointerDeviceKind.touch,
+            PointerDeviceKind.stylus,
+            PointerDeviceKind.unknown
+          },
+        ));
   }
 }
 
@@ -102,87 +101,80 @@ class _MyHomePageState extends State<MyHomePage> {
               Icons.location_on,
               color: Colors.green.shade500,
             ),
-            const Text("Lahore, Pakistan",
-              style: TextStyle(
-                  color: Colors.black
-              ),),
+            const Text(
+              "Lahore, Pakistan",
+              style: TextStyle(color: Colors.black),
+            ),
           ],
         ),
         actions: [
           IconButton(
-              onPressed: (){
+              onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const DetailsPage()),
-                );              },
-              icon: const Icon(Icons.notifications,
-                  color: Colors.green))
+                );
+              },
+              icon: const Icon(Icons.notifications, color: Colors.green))
         ],
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
-      bottomNavigationBar: const BottomNavBar(),
+      bottomNavigationBar: const CustomBottomAppBar(),
       drawer: const NavBar(),
-
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Container(
           height: MediaQuery.of(context).size.height,
           child: ListView(
             children: [
-              const SizedBox(height: 8,),
+              const SizedBox(
+                height: 8,
+              ),
               const SearchField(),
-              const SizedBox(height: 8,),
+              const SizedBox(
+                height: 8,
+              ),
               CarouselSlider(
                   items: [
                     Container(
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        image: const DecorationImage(
-                          image: AssetImage("assets/cover-image-4-1.jpg"),
-                           fit: BoxFit.cover
-                           // image: NetworkImage("https://media.istockphoto.com/id/1409298953/photo/real-estate-agents-shake-hands-after-the-signing-of-the-contract-agreement-is-complete.jpg?s=1024x1024&w=is&k=20&c=Q7y-IUDhsXhiKKDPopD1ZRHRvkeunhledaJ2iMRdEr8="))
-                      ),
-                        borderRadius: BorderRadius.circular(25)
-                      )
-                    ),
-
+                        margin: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            image: const DecorationImage(
+                                image: AssetImage("assets/cover-image-4-1.jpg"),
+                                fit: BoxFit.cover
+                                // image: NetworkImage("https://media.istockphoto.com/id/1409298953/photo/real-estate-agents-shake-hands-after-the-signing-of-the-contract-agreement-is-complete.jpg?s=1024x1024&w=is&k=20&c=Q7y-IUDhsXhiKKDPopD1ZRHRvkeunhledaJ2iMRdEr8="))
+                                ),
+                            borderRadius: BorderRadius.circular(25))),
                     Container(
                         margin: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                             color: Colors.black,
                             image: const DecorationImage(
-                                image: AssetImage("assets/pexels-binyamin-mellish-186077.jpg"),
-                                fit: BoxFit.cover
-                            ),
-                            borderRadius: BorderRadius.circular(25)
-                        )
-                    ),
-
+                                image: AssetImage(
+                                    "assets/pexels-binyamin-mellish-186077.jpg"),
+                                fit: BoxFit.cover),
+                            borderRadius: BorderRadius.circular(25))),
                     Container(
                         margin: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                             color: Colors.black,
                             image: const DecorationImage(
-                                image: AssetImage("assets/sell-property-in-india.jpg"),
-                                fit: BoxFit.cover
-                            ),
-                            borderRadius: BorderRadius.circular(25)
-                        )
-                    )
+                                image: AssetImage(
+                                    "assets/sell-property-in-india.jpg"),
+                                fit: BoxFit.cover),
+                            borderRadius: BorderRadius.circular(25)))
                   ],
                   options: CarouselOptions(
-                    height: 180,
-                    aspectRatio: 16/8,
-                    viewportFraction: 0.8,
-                    autoPlay: true,
-                    autoPlayInterval: const Duration(seconds: 2),
-                    autoPlayAnimationDuration: const Duration(milliseconds: 500),
-                    enlargeCenterPage: true,
-                    enlargeFactor: 0.5
-                  )
-              ),
-
+                      height: 180,
+                      aspectRatio: 16 / 8,
+                      viewportFraction: 0.8,
+                      autoPlay: true,
+                      autoPlayInterval: const Duration(seconds: 2),
+                      autoPlayAnimationDuration:
+                          const Duration(milliseconds: 500),
+                      enlargeCenterPage: true,
+                      enlargeFactor: 0.5)),
               Container(
                 margin: const EdgeInsets.only(
                   top: 10,
@@ -198,8 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         blurRadius: 5,
                         color: Colors.grey,
                       )
-                    ]
-                ),
+                    ]),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -211,9 +202,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const SelectCategory(),
-                       const SizedBox(height: 7),
-                     // SuggestionList("Recommended for you..", HouseModel.data),
-                       const SizedBox(height: 10,),
+                      const SizedBox(height: 7),
+                      // SuggestionList("Recommended for you..", HouseModel.data),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(10),
@@ -222,7 +215,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               childAspectRatio: 2,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
-                              children: List.generate(cardItems.length, (index) {
+                              children:
+                                  List.generate(cardItems.length, (index) {
                                 return Container(
                                   width: 30,
                                   height: 18,
@@ -237,7 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     cardItems[index],
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                    color: Colors.green.shade500),
+                                        color: Colors.green.shade500),
                                   )),
                                 );
                               })),
@@ -245,34 +239,40 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ]),
               ),
-               const SizedBox(height: 10),
+              const SizedBox(height: 10),
               Expanded(
                 child: FutureBuilder(
-                  future: FireStoreCollections().fetchHouses(searchMode: searchModeValue, searchItem: searchItem, propertyType: propertyType),
+                  future: FireStoreCollections().fetchHouses(
+                      searchMode: searchModeValue,
+                      searchItem: searchItem,
+                      propertyType: propertyType),
                   builder: (context, snapshot) {
                     return Column(
                         children: List.generate(snapshot.data!.length, (index) {
-                          if(favoritedIcons.length <= index){
-                            favoritedIcons.add(false);
-                          }
-                          for(var element in UserAuthentication.currentUser.favorites){
-                            if(snapshot.data![index].houseId == element){
-                              favoritedIcons[index] = true;
-                            }
-                          }
+                      if (favoritedIcons.length <= index) {
+                        favoritedIcons.add(false);
+                      }
+                      for (var element
+                          in UserAuthentication.currentUser.favorites) {
+                        if (snapshot.data![index].houseId == element) {
+                          favoritedIcons[index] = true;
+                        }
+                      }
                       return Container(
                         child: InkWell(
                           onTap: () {
-                            // Navigator.push(context,
-                            //     MaterialPageRoute(builder: (context) {
-                            //   return HouseDetails(
-                            //     house: snapshot.data![index],
-                            //     user: snapshot.data![index].userId,
-                            //     imageUrl: imageUrl,
-                            //   );
-                            // }));
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context)=> const DetailsPage()));
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return HouseDetails(
+                                house: snapshot.data![index],
+                                user: snapshot.data![index].userId,
+                                imageUrl: imageUrl,
+                              );
+                            }));
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => const DetailsPage()));
                           },
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,20 +288,31 @@ class _MyHomePageState extends State<MyHomePage> {
                                     fit: BoxFit.cover,
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 12, left: 10),
+                                    padding: const EdgeInsets.only(
+                                        top: 12, left: 10),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
                                         Text(
-                                          snapshot.data![index].price.toString(),
+                                          HouseFunctions().formatPrice(
+                                              snapshot.data![index].price),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          snapshot.data![index].areaSize
+                                              .toString(),
                                           style: const TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
                                         Text(
                                             "${snapshot.data![index].address} ${snapshot.data![index].area}"),
                                         Padding(
-                                          padding: const EdgeInsets.only(top: 25),
+                                          padding:
+                                              const EdgeInsets.only(top: 25),
                                           child: OutlinedButton(
                                               onPressed: () {
                                                 openChatWithUser(
@@ -316,20 +327,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ],
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 12, right: 15),
+                                padding:
+                                    const EdgeInsets.only(top: 12, right: 15),
                                 child: InkWell(
                                     onTap: () {
                                       HouseFunctions().toggleFavorite(
                                           snapshot.data![index].houseId);
                                       setState(() {
-                                        favoritedIcons[index] = !favoritedIcons[index];
+                                        favoritedIcons[index] =
+                                            !favoritedIcons[index];
                                       });
                                     },
                                     child: Icon(
                                       favoritedIcons[index]
                                           ? CupertinoIcons.heart_fill
                                           : CupertinoIcons.heart,
-                                      color: favoritedIcons[index] ? Colors.red : null,
+                                      color: favoritedIcons[index]
+                                          ? Colors.red
+                                          : null,
                                     )),
                               ),
                             ],
@@ -352,7 +367,7 @@ class _MyHomePageState extends State<MyHomePage> {
       showDialog(
         context: context,
         builder: (context) {
-          Future.delayed(const Duration(seconds: 2), () {
+          Future.delayed(Duration(seconds: 2), () {
             Navigator.pop(context);
           });
           return AlertDialog(
@@ -366,26 +381,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('Close'),
+                child: Text('Close'),
               ),
             ],
           );
         },
       );
     } else {
-      UserModel currentUser = UserAuthentication.currentUser;
       UserModel user = await FireStoreCollections().getUser(userId);
-      if (currentUser.activeChats.isEmpty) {
-        currentUser.activeChats.add(user.id);
-      } else {
-        for (var UserId in currentUser.activeChats) {
-          if (user.id != UserId) {
-            currentUser.activeChats.add(user.id);
-          }
-        }
-      }
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Chat(user: user)));
+      HouseFunctions().addActiveChat(userId);
     }
   }
 }

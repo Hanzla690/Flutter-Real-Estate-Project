@@ -66,7 +66,7 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
                 },
                 child: const Column(
                   children: [
-                    Icon(CupertinoIcons.heart_fill, color: Colors.red),
+                    Icon(CupertinoIcons.heart_fill),
                     Text("Favorites"),
                   ],
                 ),

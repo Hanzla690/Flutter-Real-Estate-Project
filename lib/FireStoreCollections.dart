@@ -10,11 +10,11 @@ import 'package:flutter_project/Models/UserModel.dart';
 
 class FireStoreCollections {
   final CollectionReference userCollection =
-  FirebaseFirestore.instance.collection('users');
+      FirebaseFirestore.instance.collection('users');
   final CollectionReference chatRoomCollection =
-  FirebaseFirestore.instance.collection('chat_rooms');
+      FirebaseFirestore.instance.collection('chat_rooms');
   final CollectionReference propertiesCollection =
-  FirebaseFirestore.instance.collection('properties');
+      FirebaseFirestore.instance.collection('properties');
   late CollectionReference reference;
 
   Future createUser(UserModel user) async {
@@ -47,17 +47,14 @@ class FireStoreCollections {
     return UserModel.fromMap(user.data() as Map<String, dynamic>);
   }
 
-  Future<UserModel?> getUserByEmail(String email) async{
+  Future<UserModel?> getUserByEmail(String email) async {
     var user = await userCollection.where('email', isEqualTo: email).get();
-    if(user.docs.isNotEmpty){
+    if (user.docs.isNotEmpty) {
       return UserModel.fromMap(user.docs[0].data() as Map<String, dynamic>);
-    }else{
+    } else {
       return null;
     }
-
   }
-
-
 
   Future<List<UserModel>?> fetchUsers() async {
     UserModel currentUser = UserAuthentication.currentUser;
@@ -105,24 +102,31 @@ class FireStoreCollections {
   }
 
   Future<List<HouseModel>?> fetchHouses(
-      {userID, required bool searchMode, searchItem, String propertyType = 'House'}) async {
+      {userID,
+      required bool searchMode,
+      searchItem,
+      String propertyType = 'House'}) async {
     QuerySnapshot documents;
     try {
       if (searchMode) {
-        final snapshot =
-        await FirebaseFirestore.instance.collection('properties').where('propertyType', isEqualTo: propertyType).get();
+        final snapshot = await FirebaseFirestore.instance
+            .collection('properties')
+            .where('propertyType', isEqualTo: propertyType)
+            .get();
 
         List<HouseModel> houses = snapshot.docs
             .map(
                 (doc) => HouseModel.fromMap(doc.data() as Map<String, dynamic>))
             .where((house) =>
-            house.area.toLowerCase().contains(searchItem.toLowerCase()))
+                house.area.toLowerCase().contains(searchItem.toLowerCase()))
             .toList();
 
         return houses;
       } else {
         if (userID == null) {
-          documents = await propertiesCollection.where('propertyType', isEqualTo: propertyType).get();
+          documents = await propertiesCollection
+              .where('propertyType', isEqualTo: propertyType)
+              .get();
         } else {
           documents = await propertiesCollection
               .where('userId', isEqualTo: userID)
@@ -131,7 +135,7 @@ class FireStoreCollections {
         if (documents.docs.isNotEmpty) {
           List<HouseModel> houses = documents.docs
               .map((house) =>
-              HouseModel.fromMap(house.data() as Map<String, dynamic>))
+                  HouseModel.fromMap(house.data() as Map<String, dynamic>))
               .toList();
           return houses;
         }
@@ -144,12 +148,12 @@ class FireStoreCollections {
 
   Future<List<HouseModel>> searchByArea(String searchItem) async {
     final snapshot =
-    await FirebaseFirestore.instance.collection('properties').get();
+        await FirebaseFirestore.instance.collection('properties').get();
 
     List<HouseModel> searchResults = snapshot.docs
         .map((doc) => HouseModel.fromMap(doc.data() as Map<String, dynamic>))
         .where((house) =>
-        house.area.toLowerCase().contains(searchItem.toLowerCase()))
+            house.area.toLowerCase().contains(searchItem.toLowerCase()))
         .toList();
 
     return searchResults;
@@ -167,8 +171,12 @@ class FireStoreCollections {
     return houses;
   }
 
-  updateUser() async {
-    UserModel user = UserAuthentication.currentUser;
-    await userCollection.doc(user.id).set(user.toJSON());
+  updateUser({otherUser}) async {
+    if (otherUser == null) {
+      UserModel user = UserAuthentication.currentUser;
+      await userCollection.doc(user.id).set(user.toJSON());
+    } else {
+      await userCollection.doc(otherUser.id).set(otherUser.toJSON());
+    }
   }
 }
